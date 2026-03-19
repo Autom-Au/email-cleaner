@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Cleaner</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f5f0;--ink:#1a1814;--ink2:#5a5650;--ink3:#9a9590;--accent:#e8400a;--al:#fff0eb;--green:#1a7a4a;--gl:#eaf7f0;--gold:#c8860a;--gol:#fef8eb;--blue:#1a5fa0;--bl:#eaf2ff;--surface:#fff;--border:#e5e2db;--border2:#ccc9c2;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;opacity:.4;pointer-events:none;z-index:0;}
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:40px 20px 80px;}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:48px;padding-bottom:28px;border-bottom:2px solid var(--ink);}
+.logo-top{font-size:.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--ink3);font-weight:500;display:block;}
+.logo-name{font-size:2rem;font-weight:800;letter-spacing:-1px;line-height:1;}
+.logo-name span{color:var(--accent);}
+.hbadge{font-family:'DM Mono',monospace;font-size:.68rem;padding:5px 12px;border-radius:2px;background:var(--ink);color:var(--bg);letter-spacing:1px;align-self:center;}
+.sbar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:4px;margin-bottom:28px;font-size:.78rem;font-family:'DM Mono',monospace;border:1.5px solid;}
+.sbar.ok{background:var(--gl);border-color:var(--green);color:var(--green);}
+.sbar.loading{background:var(--gol);border-color:var(--gold);color:var(--gold);}
+.sbar.error{background:var(--al);border-color:var(--accent);color:var(--accent);}
+.sdot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.sdot.pulse{animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.card{background:var(--surface);border:1.5px solid var(--border2);border-radius:6px;overflow:hidden;margin-bottom:20px;}
+.chead{padding:14px 20px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);}
+.clabel{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--ink2);font-weight:600;}
+.cbody{padding:20px;}
+textarea{width:100%;min-height:200px;background:var(--bg);border:1.5px solid var(--border);border-radius:4px;font-family:'DM Mono',monospace;font-size:.8rem;line-height:1.8;color:var(--ink);padding:14px;resize:vertical;transition:border-color .15s;}
+textarea:focus{outline:none;border-color:var(--ink);}
+textarea::placeholder{color:var(--ink3);font-family:'Syne',sans-serif;font-size:.82rem;}
+.cpill{font-family:'DM Mono',monospace;font-size:.7rem;padding:3px 10px;border-radius:2px;background:var(--border);color:var(--ink2);}
+.cpill.on{background:var(--ink);color:var(--bg);}
+.rsummary{display:none;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center;}
+.rsummary.show{display:flex;}
+.rchip{font-size:.7rem;padding:3px 10px;border-radius:2px;font-family:'DM Mono',monospace;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+.rchip.b{background:var(--al);color:var(--accent);border:1px solid rgba(232,64,10,.2);}
+.rchip.i{background:var(--gol);color:var(--gold);border:1px solid rgba(200,134,10,.2);}
+.rchip.c{background:var(--bl);color:var(--blue);border:1px solid rgba(26,95,160,.2);}
+.arb{width:100%;padding:12px;background:transparent;color:var(--ink2);border:1.5px dashed var(--border2);border-radius:4px;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.arb:hover{border-color:var(--accent);color:var(--accent);background:var(--al);border-style:solid;}
+.runbtn{width:100%;padding:16px;background:var(--ink);color:var(--bg);border:none;border-radius:4px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.runbtn:hover{background:var(--accent);transform:translateY(-1px);}
+.runbtn:disabled{background:var(--border2);color:var(--ink3);cursor:not-allowed;transform:none;}
+.proc{display:none;align-items:center;gap:10px;padding:12px 16px;background:var(--gol);border:1.5px solid var(--gold);border-radius:4px;font-size:.8rem;color:var(--gold);font-family:'DM Mono',monospace;margin-top:10px;}
+.proc.show{display:flex;}
+.spin{width:14px;height:14px;border:2px solid rgba(200,134,10,.3);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg)}}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.sc{background:var(--surface);border:1.5px solid var(--border2);border-radius:4px;padding:16px;text-align:center;position:relative;overflow:hidden;}
+.sc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;}
+.sc.g::after{background:var(--green)}.sc.r::after{background:var(--accent)}.sc.o::after{background:var(--gold)}.sc.gr::after{background:var(--ink3)}
+.sn{font-size:2rem;font-weight:800;line-height:1;margin-bottom:4px;}
+.sn.g{color:var(--green)}.sn.r{color:var(--accent)}.sn.o{color:var(--gold)}.sn.gr{color:var(--ink3)}
+.sl{font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);font-weight:600;}
+.dlrow{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.dlbtn{flex:1;min-width:160px;padding:12px 16px;border:1.5px solid;border-radius:4px;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.dlbtn.g{border-color:var(--green);color:var(--green);background:var(--gl);}
+.dlbtn.g:hover{background:var(--green);color:#fff;}
+.dlbtn.r{border-color:var(--accent);color:var(--accent);background:var(--al);}
+.dlbtn.r:hover{background:var(--accent);color:#fff;}
+.rw{border:1.5px solid var(--border2);border-radius:4px;overflow:hidden;max-height:320px;overflow-y:auto;}
+.rw::-webkit-scrollbar{width:4px;}.rw::-webkit-scrollbar-thumb{background:var(--border2);}
+table{width:100%;border-collapse:collapse;}
+thead th{background:var(--ink);color:var(--bg);font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;padding:10px 14px;text-align:left;position:sticky;top:0;}
+tbody tr{border-bottom:1px solid var(--border);}
+tbody tr:hover{background:var(--bg);}
+tbody td{padding:9px 14px;font-size:.8rem;font-family:'DM Mono',monospace;color:var(--ink2);}
+.tag{display:inline-block;font-size:.65rem;font-weight:600;padding:2px 8px;border-radius:2px;font-family:'Syne',sans-serif;}
+.tc{background:var(--gl);color:var(--green);}
+.tb{background:var(--al);color:var(--accent);}
+.td{background:var(--gol);color:var(--gold);}
+.ti{background:var(--border);color:var(--ink3);}
+.tcu{background:var(--bl);color:var(--blue);}
+.fpills{display:flex;gap:6px;flex-wrap:wrap;}
+.fp{font-size:.72rem;font-weight:600;padding:5px 12px;border:1.5px solid var(--border2);border-radius:2px;cursor:pointer;background:var(--surface);color:var(--ink2);transition:all .12s;font-family:'Syne',sans-serif;}
+.fp.on,.fp:hover{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+.moverlay{position:fixed;inset:0;background:rgba(26,24,20,.75);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
+.moverlay.open{display:flex;}
+.modal{background:var(--surface);border:2px solid var(--ink);border-radius:8px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;}
+.mhead{padding:18px 22px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:var(--bg);}
+.mtitle{font-size:1rem;font-weight:800;}
+.mclose{background:transparent;border:none;color:var(--bg);font-size:1.4rem;cursor:pointer;padding:2px 6px;line-height:1;}
+.mbody{padding:22px;}
+.trow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.tbtn{padding:14px 8px;border:2px solid var(--border2);border-radius:4px;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;background:var(--bg);color:var(--ink2);transition:all .15s;text-align:center;line-height:1.4;}
+.tbtn .ticon{font-size:1.1rem;display:block;margin-bottom:5px;}
+.tbtn.sb{border-color:var(--accent);background:var(--al);color:var(--accent);}
+.tbtn.si{border-color:var(--gold);background:var(--gol);color:var(--gold);}
+.tbtn.sc2{border-color:var(--blue);background:var(--bl);color:var(--blue);}
+.tdesc{font-size:.78rem;color:var(--ink2);margin-bottom:14px;padding:10px 14px;background:var(--bg);border-radius:4px;border-left:3px solid var(--border2);line-height:1.6;}
+.tdesc.b{border-left-color:var(--accent);}
+.tdesc.i{border-left-color:var(--gold);}
+.tdesc.c{border-left-color:var(--blue);}
+.mtarea{width:100%;min-height:150px;background:var(--bg);border:1.5px solid var(--border);border-radius:4px;font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.8;color:var(--ink);padding:12px;resize:vertical;}
+.mtarea:focus{outline:none;border-color:var(--ink);}
+.mfooter{display:flex;gap:10px;margin-top:14px;}
+.mapply{flex:1;padding:12px;border:none;border-radius:4px;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;}
+.mapply.b{background:var(--accent);color:#fff;}
+.mapply.i{background:var(--gold);color:#fff;}
+.mapply.c{background:var(--blue);color:#fff;}
+.mcancel{padding:12px 20px;background:transparent;border:1.5px solid var(--border2);border-radius:4px;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;color:var(--ink2);}
+@media(max-width:600px){.sgrid{grid-template-columns:repeat(2,1fr)}.header{flex-direction:column;gap:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="header">
+    <div><span class="logo-top">Free Tool</span><span class="logo-name">Email<span>Cleaner</span></span></div>
+    <span class="hbadge">LIVE DATABASE</span>
+  </header>
+  <div style="margin-bottom:28px">
+    <h1 style="font-size:1.6rem;font-weight:700;letter-spacing:-.5px;margin-bottom:8px">Paste emails &rarr; Get clean list instantly</h1>
+    <p style="font-size:.9rem;color:var(--ink2);line-height:1.6">Bounce emails remove చేసి, duplicates తీసి, invalid format check చేసి clean CSV ఇస్తాం.</p>
+  </div>
+  <div class="sbar loading" id="sbar"><span class="sdot pulse"></span><span id="stxt">Bounce database loading...</span></div>
+  <div class="card">
+    <div class="chead"><span class="clabel">Your Emails</span><span class="cpill" id="icnt">0 emails</span></div>
+    <div class="cbody">
+      <textarea id="emailInput" oninput="onInput()" placeholder="Emails paste చేయండి:&#10;&#10;user1@gmail.com&#10;user2@yahoo.com&#10;contact@company.org&#10;...&#10;&#10;(గరిష్టంగా 1,000 emails)"></textarea>
+      <div style="display:flex;justify-content:space-between;margin-top:8px">
+        <span style="font-size:.75rem;color:var(--ink3)">Line, comma, or space separated</span>
+        <button onclick="loadSample()" style="font-size:.75rem;padding:4px 10px;border:1px solid var(--border2);border-radius:2px;background:transparent;cursor:pointer;font-family:Syne,sans-serif;color:var(--ink2)">Try sample</button>
+      </div>
+      <div class="rsummary" id="rsummary">
+        <span style="font-size:.72rem;color:var(--ink3);font-family:'DM Mono',monospace">Remove list:</span>
+        <span class="rchip b" id="chipB" style="display:none" onclick="openModal('b')"><span id="nB">0</span> Bounced &times;</span>
+        <span class="rchip i" id="chipI" style="display:none" onclick="openModal('i')"><span id="nI">0</span> Invalid &times;</span>
+        <span class="rchip c" id="chipC" style="display:none" onclick="openModal('c')"><span id="nC">0</span> Custom &times;</span>
+      </div>
+      <button class="arb" onclick="openModal('b')">&#10005; &nbsp; ADD REMOVE EMAILS</button>
+      <div class="proc" id="proc"><div class="spin"></div><span id="proctxt">Processing...</span></div>
+      <button class="runbtn" id="runBtn" onclick="runCleaner()" disabled>&#9654; &nbsp; RUN CLEANER</button>
+    </div>
+  </div>
+  <div id="res" style="display:none">
+    <div class="sgrid">
+      <div class="sc g"><div class="sn g" id="s1">0</div><div class="sl">Clean</div></div>
+      <div class="sc r"><div class="sn r" id="s2">0</div><div class="sl">Bounced</div></div>
+      <div class="sc o"><div class="sn o" id="s3">0</div><div class="sl">Duplicates</div></div>
+      <div class="sc gr"><div class="sn gr" id="s4">0</div><div class="sl">Removed</div></div>
+    </div>
+    <div class="dlrow">
+      <button class="dlbtn g" onclick="dl('clean')">&#8595; &nbsp; Clean Emails CSV</button>
+      <button class="dlbtn r" onclick="dl('removed')">&#8595; &nbsp; Removed Emails CSV</button>
+    </div>
+    <div class="card">
+      <div class="chead">
+        <span class="clabel">Results</span>
+        <div class="fpills">
+          <button class="fp on" onclick="setF('all',this)">All</button>
+          <button class="fp" onclick="setF('clean',this)">Clean</button>
+          <button class="fp" onclick="setF('bounce',this)">Bounce</button>
+          <button class="fp" onclick="setF('duplicate',this)">Duplicate</button>
+          <button class="fp" onclick="setF('invalid',this)">Invalid</button>
+          <button class="fp" onclick="setF('custom',this)">Custom</button>
+        </div>
+      </div>
+      <div class="rw"><table><thead><tr><th>#</th><th>Email</th><th>Status</th><th>Reason</th></tr></thead><tbody id="tbody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay" id="mov" onclick="outerClose(event)">
+  <div class="modal">
+    <div class="mhead"><span class="mtitle">&#10005; Add Remove Emails</span><button class="mclose" onclick="closeModal()">&#215;</button></div>
+    <div class="mbody">
+      <p style="font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);font-weight:600;margin-bottom:10px">Remove Type ఎంచుకోండి:</p>
+      <div class="trow">
+        <button class="tbtn sb" id="tB" onclick="selType('b')"><span class="ticon">&#10060;</span>Bounced</button>
+        <button class="tbtn" id="tI" onclick="selType('i')"><span class="ticon">&#9888;&#65039;</span>Invalid</button>
+        <button class="tbtn" id="tC" onclick="selType('c')"><span class="ticon">&#8856;</span>Custom</button>
+      </div>
+      <div class="tdesc b" id="tdesc"><strong>Bounced:</strong> ఈ emails bounce అయినవి — remove అవుతాయి మరియు next user upload చేసినప్పుడు కూడా <strong>Bounced గా కనిపిస్తాయి.</strong> Admin database లో permanently save అవుతాయి.</div>
+      <p style="font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);font-weight:600;margin-bottom:8px">Emails Paste చేయండి:</p>
+      <textarea class="mtarea" id="mta" oninput="updMCnt()" placeholder="email1@example.com&#10;email2@domain.com&#10;..."></textarea>
+      <div style="display:flex;justify-content:space-between;margin-top:6px">
+        <span style="font-size:.72rem;color:var(--ink3);font-family:'DM Mono',monospace" id="mcnt">0 emails</span>
+        <span style="font-size:.72rem;color:var(--ink3)">One per line or comma</span>
+      </div>
+      <div class="mfooter">
+        <button class="mcancel" onclick="closeModal()">Cancel</button>
+        <button class="mapply b" id="mapply" onclick="applyList()">&#10003; Add to Remove List</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL='https://ieyzitcsbjafjtinnvgg.supabase.co';
+const SUPABASE_KEY='sb_publishable_13POJrPuB4AV-NoiZ_lg5Q_hXrBYt03';
+let bounceDB=new Set(),RL={b:new Set(),i:new Set(),c:new Set()},results=[],filter='all',mtype='b';
+async function loadBounceDB(){
+  try{
+    setS('loading','Bounce database loading...');
+    let all=[],from=0;
+    while(true){
+      const r=await fetch(`${SUPABASE_URL}/rest/v1/bounced_emails?select=email&limit=1000&offset=${from}`,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+      if(!r.ok)throw 0;
+      const d=await r.json();
+      if(!d.length)break;
+      d.forEach(x=>all.push(x.email.toLowerCase()));
+      if(d.length<1000)break;
+      from+=1000;
+    }
+    bounceDB=new Set(all);
+    setS('ok',`Ready — ${bounceDB.size.toLocaleString()} bounce emails loaded`);
+  }catch(e){setS('error','Database offline — local mode active');}
+}
+function setS(t,m){const b=document.getElementById('sbar');b.className='sbar '+t;b.querySelector('.sdot').className='sdot'+(t==='loading'?' pulse':'');document.getElementById('stxt').textContent=m;}
+function parseE(raw){return[...new Set(raw.split(/[\n\r,;\s]+/).map(e=>e.trim().toLowerCase()).filter(e=>e.length>3))];}
+function valid(e){return/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);}
+function onInput(){const n=parseE(document.getElementById('emailInput').value).length;const p=document.getElementById('icnt');p.textContent=n+' emails';p.className='cpill'+(n>0?' on':'');document.getElementById('runBtn').disabled=n===0;}
+function loadSample(){document.getElementById('emailInput').value='alice@gmail.com\nbob@yahoo.com\ncharlie@outlook.com\nbad-email-here\nalice@gmail.com\nnoreply@test.com';onInput();}
+function openModal(t){mtype=t;selType(t);document.getElementById('mov').classList.add('open');document.getElementById('mta').focus();}
+function closeModal(){document.getElementById('mov').classList.remove('open');}
+function outerClose(e){if(e.target===document.getElementById('mov'))closeModal();}
+function selType(t){
+  mtype=t;
+  ['b','i','c'].forEach(k=>{const m={'b':'tB','i':'tI','c':'tC'};document.getElementById(m[k]).className='tbtn'+(k===t?' s'+(t==='c'?'c2':t):'');});
+  const descs={b:'<strong>Bounced:</strong> ఈ emails bounce అయినవి — remove అవుతాయి మరియు next user upload చేసినప్పుడు కూడా <strong>Bounced గా కనిపిస్తాయి.</strong> Admin database లో permanently save అవుతాయి.',i:'<strong>Invalid:</strong> Invalid గా mark చేయాల్సిన emails — remove అవుతాయి, <strong>Invalid గా కనిపిస్తాయి</strong> next users కి కూడా.',c:'<strong>Custom:</strong> ఇవి remove అవుతాయి కానీ <strong>Bounced/Invalid గా చూపించవు</strong> — ఈ session కి మాత్రమే. Results లో "Custom" గా కనిపిస్తాయి.'};
+  document.getElementById('tdesc').innerHTML=descs[t];
+  document.getElementById('tdesc').className='tdesc '+t;
+  document.getElementById('mapply').className='mapply '+t;
+  updMCnt();
+}
+function updMCnt(){document.getElementById('mcnt').textContent=parseE(document.getElementById('mta').value).length+' emails';}
+function applyList(){
+  const emails=parseE(document.getElementById('mta').value);
+  if(!emails.length){closeModal();return;}
+  emails.forEach(e=>RL[mtype].add(e));
+  if(mtype!=='c'){emails.forEach(e=>bounceDB.add(e));saveToSupabase(emails,mtype==='b'?'bounced':'invalid');}
+  updateChips();closeModal();document.getElementById('mta').value='';
+}
+function updateChips(){
+  const total=RL.b.size+RL.i.size+RL.c.size;
+  const m={b:'chipB',i:'chipI',c:'chipC'},n={b:'nB',i:'nI',c:'nC'};
+  Object.keys(m).forEach(k=>{const c=document.getElementById(m[k]);c.style.display=RL[k].size>0?'inline-flex':'none';document.getElementById(n[k]).textContent=RL[k].size;});
+  document.getElementById('rsummary').className='rsummary'+(total>0?' show':'');
+}
+async function saveToSupabase(emails,reason){
+  try{await fetch(`${SUPABASE_URL}/rest/v1/bounced_emails`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=ignore-duplicates,return=minimal'},body:JSON.stringify(emails.map(e=>({email:e,reason})))});}catch(e){}
+}
+async function runCleaner(){
+  const emails=parseE(document.getElementById('emailInput').value).slice(0,1000);
+  if(!emails.length)return;
+  document.getElementById('proc').classList.add('show');
+  document.getElementById('proctxt').textContent='Processing '+emails.length+' emails...';
+  document.getElementById('runBtn').disabled=true;
+  await new Promise(r=>setTimeout(r,80));
+  results=[];const seen=new Set();
+  emails.forEach((email,i)=>{
+    let status,reason;
+    if(!valid(email)){status='invalid';reason='Invalid format';}
+    else if(RL.b.has(email)||bounceDB.has(email)){status='bounce';reason='Bounced email';}
+    else if(RL.i.has(email)){status='invalid';reason='Marked invalid';}
+    else if(RL.c.has(email)){status='custom';reason='Custom removed';}
+    else if(seen.has(email)){status='duplicate';reason='Duplicate';}
+    else{status='clean';reason='—';}
+    seen.add(email);results.push({n:i+1,email,status,reason});
+  });
+  const c={clean:0,bounce:0,duplicate:0,invalid:0,custom:0};
+  results.forEach(r=>c[r.status]++);
+  document.getElementById('s1').textContent=c.clean;
+  document.getElementById('s2').textContent=c.bounce;
+  document.getElementById('s3').textContent=c.duplicate;
+  document.getElementById('s4').textContent=c.invalid+c.custom;
+  renderTable();
+  document.getElementById('res').style.display='block';
+  document.getElementById('proc').classList.remove('show');
+  document.getElementById('runBtn').disabled=false;
+  document.getElementById('res').scrollIntoView({behavior:'smooth'});
+  try{await fetch(`${SUPABASE_URL}/rest/v1/user_submissions`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({session_id:Math.random().toString(36).slice(2),total_input:emails.length,clean_count:c.clean,bounce_count:c.bounce,dup_count:c.duplicate})});}catch(e){}
+}
+function renderTable(){
+  const f=filter==='all'?results:results.filter(r=>r.status===filter);
+  const tmap={clean:'tc',bounce:'tb',duplicate:'td',invalid:'ti',custom:'tcu'};
+  const lmap={clean:'Clean',bounce:'Bounced',duplicate:'Duplicate',invalid:'Invalid',custom:'Custom'};
+  document.getElementById('tbody').innerHTML=f.map((r,i)=>`<tr><td style="color:var(--ink3);font-size:.72rem">${i+1}</td><td>${r.email}</td><td><span class="tag ${tmap[r.status]}">${lmap[r.status]}</span></td><td style="font-size:.75rem;color:var(--ink3)">${r.reason}</td></tr>`).join('');
+}
+function setF(f,btn){filter=f;document.querySelectorAll('.fp').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderTable();}
+function dl(type){
+  const rows=type==='clean'?results.filter(r=>r.status==='clean'):results.filter(r=>r.status!=='clean'&&r.status!=='duplicate');
+  if(!rows.length){alert('No data!');return;}
+  const csv='Email,Status,Reason\n'+rows.map(r=>`"${r.email}","${r.status}","${r.reason}"`).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=type==='clean'?'clean_emails.csv':'removed_emails.csv';a.click();
+}
+loadBounceDB();
+</script>
+</body>
+</html>
