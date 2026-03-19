@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Cleaner — Free Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f5f0;
+  --ink: #1a1814;
+  --ink2: #5a5650;
+  --ink3: #9a9590;
+  --accent: #e8400a;
+  --accent-light: #fff0eb;
+  --green: #1a7a4a;
+  --green-light: #eaf7f0;
+  --gold: #c8860a;
+  --gold-light: #fef8eb;
+  --surface: #ffffff;
+  --border: #e5e2db;
+  --border2: #ccc9c2;
+  --shadow: 0 2px 12px rgba(26,24,20,0.08);
+  --shadow-lg: 0 8px 32px rgba(26,24,20,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+/* Header */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 48px;
+  padding-bottom: 28px;
+  border-bottom: 2px solid var(--ink);
+}
+.logo { display: flex; flex-direction: column; gap: 2px; }
+.logo-top {
+  font-size: 0.68rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  font-weight: 500;
+}
+.logo-name {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: var(--ink);
+}
+.logo-name span { color: var(--accent); }
+.header-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  padding: 5px 12px;
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+  background: var(--ink);
+  color: var(--bg);
+  letter-spacing: 1px;
+  align-self: center;
+}
+
+/* Hero */
+.hero {
+  margin-bottom: 36px;
+}
+.hero h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+.hero p { font-size: 0.9rem; color: var(--ink2); line-height: 1.6; }
+
+/* Status bar */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--green-light);
+  border: 1.5px solid var(--green);
+  border-radius: 4px;
+  margin-bottom: 28px;
+  font-size: 0.78rem;
+  color: var(--green);
+  font-family: 'DM Mono', monospace;
+}
+.status-bar.loading { background: var(--gold-light); border-color: var(--gold); color: var(--gold); }
+.status-bar.error { background: #fff0eb; border-color: var(--accent); color: var(--accent); }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.status-dot.pulse { animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* Main card */
+.card {
+  background: var(--surface);
+  border: 1.5px solid var(--border2);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.card-head {
+  padding: 16px 20px;
+  border-bottom: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg);
+}
+.card-label {
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink2);
+  font-weight: 600;
+}
+.card-body { padding: 20px; }
+
+/* Textarea */
+textarea {
+  width: 100%;
+  min-height: 220px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.8;
+  color: var(--ink);
+  padding: 14px;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+textarea:focus { outline: none; border-color: var(--ink); }
+textarea::placeholder { color: var(--ink3); font-family: 'Syne', sans-serif; font-size: 0.82rem; }
+
+.input-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.count-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 2px;
+  background: var(--border);
+  color: var(--ink2);
+}
+.count-pill.active { background: var(--ink); color: var(--bg); }
+
+/* Run button */
+.run-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--ink);
+  color: var(--bg);
+  border: none;
+  border-radius: 4px;
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.run-btn:hover { background: var(--accent); transform: translateY(-1px); }
+.run-btn:disabled { background: var(--border2); color: var(--ink3); cursor: not-allowed; transform: none; }
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.stat {
+  background: var(--surface);
+  border: 1.5px solid var(--border2);
+  border-radius: 4px;
+  padding: 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.stat::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+}
+.stat.green::after { background: var(--green); }
+.stat.red::after { background: var(--accent); }
+.stat.gold::after { background: var(--gold); }
+.stat.gray::after { background: var(--ink3); }
+.stat-n {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-n.green { color: var(--green); }
+.stat-n.red { color: var(--accent); }
+.stat-n.gold { color: var(--gold); }
+.stat-n.gray { color: var(--ink3); }
+.stat-l { font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); font-weight: 600; }
+
+/* Download buttons */
+.dl-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.dl-btn {
+  flex: 1;
+  min-width: 180px;
+  padding: 12px 18px;
+  border: 1.5px solid;
+  border-radius: 4px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.dl-btn.green { border-color: var(--green); color: var(--green); background: var(--green-light); }
+.dl-btn.green:hover { background: var(--green); color: white; }
+.dl-btn.red { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.dl-btn.red:hover { background: var(--accent); color: white; }
+
+/* Results table */
+.results-wrap {
+  border: 1.5px solid var(--border2);
+  border-radius: 4px;
+  overflow: hidden;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.results-wrap::-webkit-scrollbar { width: 4px; }
+.results-wrap::-webkit-scrollbar-track { background: var(--bg); }
+.results-wrap::-webkit-scrollbar-thumb { background: var(--border2); }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  background: var(--ink);
+  color: var(--bg);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+}
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:hover { background: var(--bg); }
+tbody td {
+  padding: 9px 14px;
+  font-size: 0.8rem;
+  font-family: 'DM Mono', monospace;
+  color: var(--ink2);
+}
+.tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+  font-family: 'Syne', sans-serif;
+}
+.tag-clean { background: var(--green-light); color: var(--green); }
+.tag-bounce { background: var(--accent-light); color: var(--accent); }
+.tag-dup { background: var(--gold-light); color: var(--gold); }
+.tag-invalid { background: var(--border); color: var(--ink3); }
+
+/* Filter pills */
+.filter-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.filter-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border: 1.5px solid var(--border2);
+  border-radius: 2px;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--ink2);
+  transition: all 0.12s;
+  font-family: 'Syne', sans-serif;
+}
+.filter-pill.active, .filter-pill:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* Empty */
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ink3);
+}
+.empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+.empty p { font-size: 0.88rem; }
+
+/* Processing */
+.processing {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--gold-light);
+  border: 1.5px solid var(--gold);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--gold);
+  font-family: 'DM Mono', monospace;
+  margin-top: 12px;
+}
+.processing.show { display: flex; }
+.spin { width: 14px; height: 14px; border: 2px solid rgba(200,134,10,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .header { flex-direction: column; gap: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="header">
+    <div class="logo">
+      <span class="logo-top">Free Tool</span>
+      <span class="logo-name">Email<span>Cleaner</span></span>
+    </div>
+    <span class="header-badge">LIVE DATABASE</span>
+  </header>
+
+  <div class="hero">
+    <h1>Paste emails → Get clean list instantly</h1>
+    <p>Bounce emails remove చేసి, duplicates తీసి, invalid format check చేసి clean CSV ఇస్తాం.</p>
+  </div>
+
+  <!-- Status -->
+  <div class="status-bar loading" id="statusBar">
+    <span class="status-dot pulse"></span>
+    <span id="statusText">Bounce database loading...</span>
+  </div>
+
+  <!-- Input card -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-label">Your Emails</span>
+      <span class="count-pill" id="inputCount">0 emails</span>
+    </div>
+    <div class="card-body">
+      <textarea id="emailInput"
+        placeholder="Emails paste చేయండి — ఒక్కో line లో లేదా comma తో:
+
+user1@gmail.com
+user2@yahoo.com, user3@hotmail.com
+contact@company.org
+...
+
+(గరిష్టంగా 1,000 emails ఒకేసారి)"
+        oninput="onInput()"></textarea>
+      <div class="input-footer">
+        <span style="font-size:0.75rem;color:var(--ink3)">Line, comma, or space separated</span>
+        <button style="font-size:0.75rem;padding:4px 10px;border:1px solid var(--border2);border-radius:2px;background:transparent;cursor:pointer;font-family:Syne,sans-serif;color:var(--ink2)" onclick="loadSample()">Try sample</button>
+      </div>
+      <div class="processing" id="processing">
+        <div class="spin"></div>
+        <span id="procText">Processing...</span>
+      </div>
+      <button class="run-btn" id="runBtn" onclick="runCleaner()" disabled>
+        ▶ &nbsp; RUN CLEANER
+      </button>
+    </div>
+  </div>
+
+  <!-- Results (hidden until run) -->
+  <div id="resultsSection" style="display:none">
+
+    <div class="stats-grid">
+      <div class="stat green">
+        <div class="stat-n green" id="sClean">0</div>
+        <div class="stat-l">Clean</div>
+      </div>
+      <div class="stat red">
+        <div class="stat-n red" id="sBounce">0</div>
+        <div class="stat-l">Bounced</div>
+      </div>
+      <div class="stat gold">
+        <div class="stat-n gold" id="sDup">0</div>
+        <div class="stat-l">Duplicates</div>
+      </div>
+      <div class="stat gray">
+        <div class="stat-n gray" id="sInvalid">0</div>
+        <div class="stat-l">Invalid</div>
+      </div>
+    </div>
+
+    <div class="dl-row">
+      <button class="dl-btn green" onclick="download('clean')">↓ &nbsp; Clean Emails CSV</button>
+      <button class="dl-btn red" onclick="download('bounce')">↓ &nbsp; Bounced Emails CSV</button>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="card-label">Results</span>
+        <div class="filter-row" style="margin:0">
+          <button class="filter-pill active" onclick="setFilter('all',this)">All</button>
+          <button class="filter-pill" onclick="setFilter('clean',this)">✓ Clean</button>
+          <button class="filter-pill" onclick="setFilter('bounce',this)">✕ Bounce</button>
+          <button class="filter-pill" onclick="setFilter('duplicate',this)">⟳ Dup</button>
+          <button class="filter-pill" onclick="setFilter('invalid',this)">⚠ Invalid</button>
+        </div>
+      </div>
+      <div class="results-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Email</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="emptySection" class="empty" style="display:none">
+    <div class="empty-icon">📭</div>
+    <p>Emails paste చేసి Run నొక్కండి</p>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// CONFIG — మీ Supabase credentials
+// ═══════════════════════════════════════
+const SUPABASE_URL = 'https://ieyzitcsbjafjtinnvgg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_13POJrPuB4AV-NoiZ_lg5Q_hXrBYt03';
+// ═══════════════════════════════════════
+
+let bounceSet = new Set();
+let allResults = [];
+let currentFilter = 'all';
+
+// Load bounce DB from Supabase on page load
+async function loadBounceDB() {
+  try {
+    setStatus('loading', 'Bounce database loading...');
+    let allEmails = [];
+    let from = 0;
+    const pageSize = 1000;
+
+    while (true) {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/bounced_emails?select=email&limit=${pageSize}&offset=${from}`,
+        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+      );
+      if (!res.ok) throw new Error('DB error');
+      const data = await res.json();
+      if (!data.length) break;
+      data.forEach(r => allEmails.push(r.email.toLowerCase()));
+      if (data.length < pageSize) break;
+      from += pageSize;
+    }
+
+    bounceSet = new Set(allEmails);
+    setStatus('ok', `Ready — ${bounceSet.size.toLocaleString()} bounce emails loaded`);
+  } catch(e) {
+    setStatus('error', 'Database load failed — local mode active');
+  }
+}
+
+function setStatus(type, msg) {
+  const bar = document.getElementById('statusBar');
+  const dot = bar.querySelector('.status-dot');
+  const txt = document.getElementById('statusText');
+  bar.className = 'status-bar ' + (type === 'ok' ? '' : type);
+  dot.className = 'status-dot' + (type === 'loading' ? ' pulse' : '');
+  txt.textContent = msg;
+}
+
+// Parse emails from raw text
+function parseEmails(raw) {
+  return raw.split(/[\n\r,;\s]+/).map(e => e.trim().toLowerCase()).filter(e => e.length > 2);
+}
+
+function isValidEmail(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+}
+
+function onInput() {
+  const emails = parseEmails(document.getElementById('emailInput').value);
+  const pill = document.getElementById('inputCount');
+  pill.textContent = emails.length + ' emails';
+  pill.className = 'count-pill' + (emails.length > 0 ? ' active' : '');
+  document.getElementById('runBtn').disabled = emails.length === 0;
+}
+
+function loadSample() {
+  document.getElementById('emailInput').value =
+    'alice@gmail.com\nbob@yahoo.com\ncharlie@outlook.com\nbad-email-here\nalice@gmail.com\nnoreply@test.com';
+  onInput();
+}
+
+async function runCleaner() {
+  const raw = document.getElementById('emailInput').value;
+  const emails = parseEmails(raw).slice(0, 1000);
+  if (!emails.length) return;
+
+  document.getElementById('processing').classList.add('show');
+  document.getElementById('procText').textContent = `Processing ${emails.length} emails...`;
+  document.getElementById('runBtn').disabled = true;
+
+  await new Promise(r => setTimeout(r, 100));
+
+  allResults = [];
+  const seen = new Set();
+
+  emails.forEach((email, i) => {
+    let status;
+    if (!isValidEmail(email)) status = 'invalid';
+    else if (bounceSet.has(email)) status = 'bounce';
+    else if (seen.has(email)) status = 'duplicate';
+    else status = 'clean';
+    seen.add(email);
+    allResults.push({ n: i + 1, email, status });
+  });
+
+  // Count
+  const c = { clean:0, bounce:0, duplicate:0, invalid:0 };
+  allResults.forEach(r => c[r.status]++);
+  document.getElementById('sClean').textContent = c.clean;
+  document.getElementById('sBounce').textContent = c.bounce;
+  document.getElementById('sDup').textContent = c.duplicate;
+  document.getElementById('sInvalid').textContent = c.invalid;
+
+  renderTable(allResults);
+
+  document.getElementById('resultsSection').style.display = 'block';
+  document.getElementById('processing').classList.remove('show');
+  document.getElementById('runBtn').disabled = false;
+
+  // Save to Supabase (async, don't wait)
+  saveLog(emails.length, c.clean, c.bounce, c.duplicate, c.invalid);
+}
+
+async function saveLog(total, clean, bounce, dup, invalid) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/user_submissions`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        session_id: Math.random().toString(36).slice(2),
+        total_input: total,
+        clean_count: clean,
+        bounce_count: bounce,
+        dup_count: dup
+      })
+    });
+  } catch(e) {}
+}
+
+function renderTable(data) {
+  const filtered = currentFilter === 'all' ? data : data.filter(r => r.status === currentFilter);
+  const tags = { clean:'tag-clean', bounce:'tag-bounce', duplicate:'tag-dup', invalid:'tag-invalid' };
+  const labels = { clean:'Clean', bounce:'Bounce', duplicate:'Duplicate', invalid:'Invalid' };
+  document.getElementById('resultsBody').innerHTML = filtered.map((r,i) =>
+    `<tr><td style="color:var(--ink3);font-size:0.72rem">${i+1}</td>
+     <td>${r.email}</td>
+     <td><span class="tag ${tags[r.status]}">${labels[r.status]}</span></td></tr>`
+  ).join('');
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable(allResults);
+}
+
+function download(type) {
+  const rows = type === 'clean'
+    ? allResults.filter(r => r.status === 'clean')
+    : allResults.filter(r => r.status === 'bounce');
+  if (!rows.length) return alert('No data!');
+  const csv = 'Email,Status\n' + rows.map(r => `"${r.email}","${r.status}"`).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = type === 'clean' ? 'clean_emails.csv' : 'bounce_emails.csv';
+  a.click();
+}
+
+// Init
+loadBounceDB();
+</script>
+</body>
+</html>
