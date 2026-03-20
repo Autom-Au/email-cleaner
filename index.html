@@ -193,7 +193,7 @@ const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 const H={apikey:SKEY,Authorization:'Bearer '+SKEY,'Content-Type':'application/json'};
 let bounceDB=new Set(),RL={b:new Set(),i:new Set(),c:new Map()},cleanEmails=[],mtype='b';
 (async()=>{try{let all=[],from=0;while(true){const r=await fetch(SURL+'/rest/v1/bounced_emails?select=email&limit=1000&offset='+from,{headers:{apikey:SKEY,Authorization:'Bearer '+SKEY}});if(!r.ok)break;const d=await r.json();if(!d.length)break;d.forEach(x=>all.push(x.email.toLowerCase()));if(d.length<1000)break;from+=1000;}bounceDB=new Set(all);}catch(e){}})();
-function parseE(raw){if(!raw)return[];var arr=raw.split(/[\n\r,; \t]+/);var out=[];var seen={};for(var i=0;i<arr.length;i++){var e=arr[i].trim().toLowerCase();if(e&&!seen[e]){seen[e]=1;out.push(e);}}return out;}}return out;}
+function parseE(raw){if(!raw)return[];var a=raw.split(String.fromCharCode(10));var b=[];var s={};for(var i=0;i<a.length;i++){var row=a[i].replace(/,/g,' ').replace(/;/g,' ');var words=row.split(' ');for(var j=0;j<words.length;j++){var e=words[j].trim().toLowerCase();if(e.length>2&&!s[e]){s[e]=1;b.push(e);}}}return b;}
 function isValid(e){return/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);}
 function onInput(){const n=parseE(document.getElementById('emailInput').value).length;const p=document.getElementById('inputCount');p.textContent=n.toLocaleString()+' emails';p.className='cpill'+(n>0?' on':'');document.getElementById('runBtn').disabled=n===0;}
 function loadSample(){document.getElementById('emailInput').value='alice@gmail.com\nbob@yahoo.com\ncharlie@outlook.com\nbad-email\nalice@gmail.com\nnoreply@test.com\nmark@company.org';onInput();}
