@@ -127,7 +127,7 @@ contact@company.org
 
 (Maximum 1,000 emails per run)"></textarea>
       <div class="meta-row">
-        <span class="meta-text">Line, comma, semicolon, or space separated</span>
+        <span class="meta-text">Paste any text — emails extracted automatically</span>
         <button class="sample-btn" onclick="loadSample()">Try sample</button>
       </div>
       <div class="remove-summary" id="removeSummary">
@@ -215,12 +215,15 @@ var mtype = 'b';
 
 function parseEmails(raw) {
   if (!raw) return [];
-  var parts = raw.split(/[\n\r,;\s]+/);
+  // Extract ONLY valid email addresses from any text
+  var emailRegex = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
+  var matches = raw.match(emailRegex);
+  if (!matches) return [];
   var out = [];
   var seen = {};
-  for (var i = 0; i < parts.length; i++) {
-    var e = parts[i].trim().toLowerCase();
-    if (e.length > 3 && !seen[e]) {
+  for (var i = 0; i < matches.length; i++) {
+    var e = matches[i].toLowerCase();
+    if (!seen[e]) {
       seen[e] = 1;
       out.push(e);
     }
