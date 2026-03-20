@@ -374,7 +374,7 @@ contact@company.org
       </div>
 
       <div class="type-desc-box b" id="typeDesc">
-        <strong>Bounced emails</strong> — These will be permanently saved to the bounce database. All future users will see these marked as bounced automatically.
+        <strong>Bounced emails</strong> — These will be permanently saved to the bounce database.
       </div>
 
       <!-- Custom reason field (shown only for Custom type) -->
@@ -439,7 +439,7 @@ async function loadBounceDB() {
       from += 1000;
     }
     bounceDB = new Set(all);
-    setStat('ok', `Database ready — ${bounceDB.size.toLocaleString()} entries`);
+ //   setStat('ok', `Database ready — ${bounceDB.size.toLocaleString()} entries`);
   } catch (e) {
     setStat('error', 'Offline mode — no database');
   }
