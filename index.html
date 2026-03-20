@@ -4,246 +4,121 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EmailCleaner — Free Bulk Email Cleaning Tool</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #f9f9f9;
-  --surface: #ffffff;
-  --surface2: #f3f3f3;
-  --ink: #0a0a0a;
-  --ink2: #444;
-  --ink3: #888;
-  --ink4: #bbb;
-  --border: #e0e0e0;
-  --border2: #ccc;
-  --accent: #0a0a0a;
-  --green: #16a34a;
-  --green-bg: #f0fdf4;
-  --red: #dc2626;
-  --red-bg: #fef2f2;
-  --amber: #b45309;
-  --amber-bg: #fffbeb;
-  --blue: #1d4ed8;
-  --blue-bg: #eff6ff;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-  --shadow-lg: 0 12px 32px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
-  --radius: 8px;
-  --radius-lg: 12px;
-  --mono: 'JetBrains Mono', monospace;
-  --sans: 'Inter', sans-serif;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-height: 100vh; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+:root{--bg:#f9f9f9;--surface:#fff;--s2:#f3f3f3;--ink:#0a0a0a;--ink2:#444;--ink3:#888;--ink4:#bbb;--border:#e0e0e0;--border2:#ccc;--green:#16a34a;--gl:#f0fdf4;--red:#dc2626;--rl:#fef2f2;--amber:#b45309;--al:#fffbeb;--blue:#1d4ed8;--bl:#eff6ff;--r:8px;--rl2:12px;--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;}
+.topbar{background:var(--ink);color:#fff;padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.tb-logo{font-size:15px;font-weight:700;letter-spacing:-.4px;display:flex;align-items:center;gap:8px;}
+.tb-logo .dot{width:7px;height:7px;border-radius:50%;background:#fff;}
+.tb-badge{font-family:var(--mono);font-size:10px;padding:2px 8px;border:1px solid rgba(255,255,255,.2);border-radius:3px;color:rgba(255,255,255,.5);letter-spacing:1px;}
+.main{max-width:760px;margin:0 auto;padding:40px 20px 80px;}
+.hero{margin-bottom:28px;}
+.hero h1{font-size:26px;font-weight:700;letter-spacing:-.6px;line-height:1.2;margin-bottom:6px;}
+.hero p{font-size:13px;color:var(--ink3);line-height:1.6;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl2);overflow:hidden;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.card-head{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--s2);}
+.card-title{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);}
+.card-body{padding:18px;}
+.cpill{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:20px;background:var(--s2);color:var(--ink3);border:1px solid var(--border);}
+.cpill.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+textarea{width:100%;min-height:200px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);font-family:var(--mono);font-size:12px;line-height:1.8;color:var(--ink);padding:14px;resize:vertical;transition:border-color .15s;}
+textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(10,10,10,.05);}
+textarea::placeholder{color:var(--ink4);font-family:var(--sans);font-size:13px;}
+.meta{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+.meta-text{font-size:11px;color:var(--ink3);}
+.sample-btn{font-size:11px;padding:3px 9px;border:1px solid var(--border2);border-radius:4px;background:transparent;cursor:pointer;font-family:var(--sans);color:var(--ink3);}
+.sample-btn:hover{border-color:var(--ink);color:var(--ink);}
+.rsummary{display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px;padding:8px 12px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border);}
+.rsummary.show{display:flex;}
+.rlabel{font-size:11px;color:var(--ink3);font-weight:500;}
+.rchip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;cursor:pointer;}
+.rchip.b{background:var(--rl);color:var(--red);border:1px solid #fecaca;}
+.rchip.i{background:var(--al);color:var(--amber);border:1px solid #fde68a;}
+.rchip.c{background:var(--bl);color:var(--blue);border:1px solid #bfdbfe;}
+.arb{width:100%;margin-top:10px;padding:10px;background:transparent;border:1.5px dashed var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.arb:hover{border-color:var(--ink);color:var(--ink);background:var(--s2);border-style:solid;}
+.proc{display:none;align-items:center;gap:8px;padding:10px 14px;background:var(--al);border:1px solid #fde68a;border-radius:var(--r);font-size:12px;color:var(--amber);font-family:var(--mono);margin-top:10px;}
+.proc.show{display:flex;}
+.spin{width:12px;height:12px;border:2px solid rgba(180,83,9,.2);border-top-color:var(--amber);border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg)}}
+.run-btn{width:100%;margin-top:10px;padding:14px;background:var(--ink);color:#fff;border:none;border-radius:var(--r);font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.run-btn:hover{background:#222;transform:translateY(-1px);}
+.run-btn:disabled{background:var(--border2);cursor:not-allowed;transform:none;}
+.results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl2);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.results-head{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--s2);display:flex;align-items:center;justify-content:space-between;}
+.stats-wrap{display:flex;align-items:center;gap:16px;}
+.si{display:flex;align-items:center;gap:6px;}
+.si .n{font-family:var(--mono);font-size:20px;font-weight:700;}
+.si .lbl{font-size:12px;font-weight:500;}
+.si.g .n,.si.g .lbl{color:var(--green);}
+.si.r .n,.si.r .lbl{color:var(--red);}
+.sdiv{width:1px;height:20px;background:var(--border);}
+.copy-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--ink2);transition:all .15s;}
+.copy-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+.copy-btn.copied{background:var(--green);color:#fff;border-color:var(--green);}
+.clean-list{padding:16px 18px;font-family:var(--mono);font-size:12px;line-height:2;color:var(--ink2);max-height:400px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;}
+.clean-list::-webkit-scrollbar{width:4px;}.clean-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.empty-msg{padding:40px;text-align:center;color:var(--ink3);font-size:13px;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px);}
+.overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl2);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.15);}
+.mhead{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:#fff;border-radius:var(--rl2) var(--rl2) 0 0;}
+.mtitle{font-size:14px;font-weight:700;}
+.mclose{background:transparent;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;}
+.mclose:hover{color:#fff;}
+.mbody{padding:20px;}
+.fl{font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:6px;letter-spacing:.3px;display:block;}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.topt{padding:12px 8px;border:2px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--ink2);transition:all .15s;text-align:center;}
+.topt .ticon{font-size:16px;display:block;margin-bottom:4px;}
+.topt .tsub{font-size:10px;font-weight:400;color:var(--ink3);display:block;margin-top:2px;}
+.topt.ab{border-color:var(--red);background:var(--rl);color:var(--red);}
+.topt.ai{border-color:#f59e0b;background:var(--al);color:var(--amber);}
+.topt.ac{border-color:var(--blue);background:var(--bl);color:var(--blue);}
+.tdesc{padding:9px 12px;border-radius:var(--r);font-size:12px;line-height:1.6;margin-bottom:12px;border-left:3px solid;}
+.tdesc.b{background:var(--rl);border-left-color:var(--red);color:#7f1d1d;}
+.tdesc.i{background:var(--al);border-left-color:#f59e0b;color:#78350f;}
+.tdesc.c{background:var(--bl);border-left-color:var(--blue);color:#1e3a8a;}
+.rbox{margin-bottom:12px;}
+.rlbl{font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;}
+.rchars{font-family:var(--mono);font-size:10px;color:var(--ink3);}
+.rinput{width:100%;padding:9px 11px;border:1px solid var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--bg);transition:border-color .15s;}
+.rinput:focus{outline:none;border-color:var(--ink);}
+.rhint{font-size:10px;color:var(--ink3);margin-top:3px;}
+.mta{width:100%;min-height:130px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);font-family:var(--mono);font-size:12px;line-height:1.8;color:var(--ink);padding:11px;resize:vertical;}
+.mta:focus{outline:none;border-color:var(--ink);}
+.mfooter{display:flex;gap:10px;margin-top:12px;}
+.mapply{flex:1;padding:10px;border:none;border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;}
+.mapply.b{background:var(--red);color:#fff;}
+.mapply.i{background:#f59e0b;color:#fff;}
+.mapply.c{background:var(--blue);color:#fff;}
+.mcancel{padding:10px 16px;background:transparent;border:1px solid var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;color:var(--ink2);}
+.mcancel:hover{border-color:var(--ink);color:var(--ink);}
+@media(max-width:600px){.main{padding:24px 14px 60px;}.hero h1{font-size:22px;}}
 
-/* Layout */
-.topbar { background: var(--ink); color: #fff; padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-.topbar-logo { font-size: 16px; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
-.topbar-logo .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
-.topbar-right { display: flex; align-items: center; gap: 16px; }
-.topbar-badge { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: rgba(255,255,255,0.7); letter-spacing: 1px; }
-.status-pill { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 20px; }
-.status-pill.ok { background: rgba(22,163,74,0.15); color: #4ade80; }
-.status-pill.loading { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
-.status-pill.error { background: rgba(220,38,38,0.15); color: #f87171; }
-.status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.status-dot.pulse { animation: pulse 1.4s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-.main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
-
-/* Hero */
-.hero { margin-bottom: 32px; }
-.hero-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--ink3); text-transform: uppercase; margin-bottom: 10px; }
-.hero h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.2; margin-bottom: 8px; }
-.hero p { font-size: 14px; color: var(--ink2); line-height: 1.6; }
-
-/* Cards */
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; margin-bottom: 16px; }
-.card-head { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface2); }
-.card-title { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink2); }
-.card-body { padding: 20px; }
-
-/* Textarea */
-textarea { width: 100%; min-height: 200px; background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius); font-family: var(--mono); font-size: 12px; line-height: 1.8; color: var(--ink); padding: 14px; resize: vertical; transition: border-color 0.15s, box-shadow 0.15s; }
-textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(10,10,10,0.06); }
-textarea::placeholder { color: var(--ink4); font-family: var(--sans); font-size: 13px; }
-
-/* Pills */
-.pill { font-family: var(--mono); font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 20px; }
-.pill-default { background: var(--surface2); color: var(--ink2); border: 1px solid var(--border); }
-.pill-dark { background: var(--ink); color: #fff; border: 1px solid var(--ink); }
-.pill-green { background: var(--green-bg); color: var(--green); border: 1px solid #bbf7d0; }
-.pill-red { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; }
-
-/* Remove summary */
-.remove-summary { display: none; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 10px; padding: 8px 12px; background: var(--surface2); border-radius: var(--radius); border: 1px solid var(--border); }
-.remove-summary.show { display: flex; }
-.remove-label { font-size: 11px; color: var(--ink3); font-weight: 500; }
-.remove-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: opacity 0.15s; }
-.remove-chip:hover { opacity: 0.7; }
-.chip-b { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; }
-.chip-i { background: var(--amber-bg); color: var(--amber); border: 1px solid #fde68a; }
-.chip-c { background: var(--blue-bg); color: var(--blue); border: 1px solid #bfdbfe; }
-
-/* ADD REMOVE BUTTON */
-.add-remove-btn { width: 100%; margin-top: 10px; padding: 11px; background: transparent; border: 1.5px dashed var(--border2); border-radius: var(--radius); font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--ink2); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.add-remove-btn:hover { border-color: var(--ink); color: var(--ink); background: var(--surface2); border-style: solid; }
-
-/* Run button */
-.run-btn { width: 100%; margin-top: 10px; padding: 14px; background: var(--ink); color: #fff; border: none; border-radius: var(--radius); font-family: var(--sans); font-size: 14px; font-weight: 600; letter-spacing: 0.3px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.run-btn:hover { background: #222; transform: translateY(-1px); box-shadow: var(--shadow); }
-.run-btn:disabled { background: var(--border2); cursor: not-allowed; transform: none; box-shadow: none; }
-.run-btn:active { transform: translateY(0); }
-
-/* Processing */
-.processing { display: none; align-items: center; gap: 10px; padding: 12px 14px; background: var(--amber-bg); border: 1px solid #fde68a; border-radius: var(--radius); font-size: 12px; color: var(--amber); font-family: var(--mono); margin-top: 10px; }
-.processing.show { display: flex; }
-.spin { width: 13px; height: 13px; border: 2px solid rgba(180,83,9,0.2); border-top-color: var(--amber); border-radius: 50%; animation: sp 0.7s linear infinite; }
-@keyframes sp { to { transform: rotate(360deg); } }
-
-/* Stats */
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
-.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 16px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); }
-.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-.stat-card.green::before { background: var(--green); }
-.stat-card.red::before { background: var(--red); }
-.stat-card.amber::before { background: #f59e0b; }
-.stat-card.gray::before { background: var(--ink3); }
-.stat-num { font-family: var(--mono); font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
-.stat-num.green { color: var(--green); }
-.stat-num.red { color: var(--red); }
-.stat-num.amber { color: var(--amber); }
-.stat-num.gray { color: var(--ink3); }
-.stat-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink3); }
-
-/* Download row */
-.dl-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-.dl-btn { flex: 1; min-width: 160px; padding: 11px 16px; border: 1px solid; border-radius: var(--radius); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 7px; }
-.dl-btn.green { border-color: #86efac; color: var(--green); background: var(--green-bg); }
-.dl-btn.green:hover { background: var(--green); color: #fff; border-color: var(--green); }
-.dl-btn.red { border-color: #fca5a5; color: var(--red); background: var(--red-bg); }
-.dl-btn.red:hover { background: var(--red); color: #fff; border-color: var(--red); }
-
-/* Table */
-.table-wrap { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; max-height: 340px; overflow-y: auto; }
-.table-wrap::-webkit-scrollbar { width: 4px; }
-.table-wrap::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-table { width: 100%; border-collapse: collapse; }
-thead th { background: var(--ink); color: #fff; font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; padding: 10px 14px; text-align: left; position: sticky; top: 0; font-weight: 500; }
-tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
-tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: var(--surface2); }
-tbody td { padding: 9px 14px; font-size: 12px; font-family: var(--mono); color: var(--ink2); }
-.badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.3px; font-family: var(--sans); }
-.badge-clean { background: var(--green-bg); color: var(--green); }
-.badge-bounce { background: var(--red-bg); color: var(--red); }
-.badge-dup { background: var(--amber-bg); color: var(--amber); }
-.badge-invalid { background: var(--surface2); color: var(--ink3); border: 1px solid var(--border); }
-.badge-custom { background: var(--blue-bg); color: var(--blue); }
-
-/* Filter row */
-.filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
-.filter-btn { font-size: 11px; font-weight: 500; padding: 4px 11px; border: 1px solid var(--border2); border-radius: 4px; cursor: pointer; background: var(--surface); color: var(--ink2); transition: all 0.12s; font-family: var(--sans); }
-.filter-btn.active, .filter-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
-
-/* ═══════ MODAL ═══════ */
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(2px); }
-.overlay.open { display: flex; }
-.modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
-.modal-head { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--ink); color: #fff; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
-.modal-title { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
-.modal-close { background: transparent; border: none; color: rgba(255,255,255,0.7); font-size: 20px; cursor: pointer; line-height: 1; padding: 2px 6px; transition: color 0.15s; }
-.modal-close:hover { color: #fff; }
-.modal-body { padding: 22px; }
-
-/* Type selector */
-.type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
-.type-option { padding: 14px 10px; border: 2px solid var(--border); border-radius: var(--radius); font-family: var(--sans); font-size: 12px; font-weight: 600; cursor: pointer; background: var(--surface); color: var(--ink2); transition: all 0.15s; text-align: center; }
-.type-option .type-icon { font-size: 18px; display: block; margin-bottom: 5px; }
-.type-option .type-sub { font-size: 10px; font-weight: 400; color: var(--ink3); display: block; margin-top: 3px; }
-.type-option:hover { border-color: var(--ink); }
-.type-option.active-b { border-color: var(--red); background: var(--red-bg); color: var(--red); }
-.type-option.active-i { border-color: #f59e0b; background: var(--amber-bg); color: var(--amber); }
-.type-option.active-c { border-color: var(--blue); background: var(--blue-bg); color: var(--blue); }
-
-.type-desc-box { padding: 10px 14px; border-radius: var(--radius); font-size: 12px; line-height: 1.6; margin-bottom: 14px; border-left: 3px solid; }
-.type-desc-box.b { background: var(--red-bg); border-left-color: var(--red); color: #7f1d1d; }
-.type-desc-box.i { background: var(--amber-bg); border-left-color: #f59e0b; color: #78350f; }
-.type-desc-box.c { background: var(--blue-bg); border-left-color: var(--blue); color: #1e3a8a; }
-
-/* Custom reason */
-.reason-box { margin-bottom: 14px; }
-.reason-label { font-size: 11px; font-weight: 600; color: var(--ink2); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
-.reason-chars { font-family: var(--mono); font-size: 10px; color: var(--ink3); }
-.reason-input { width: 100%; padding: 10px 12px; border: 1px solid var(--border2); border-radius: var(--radius); font-family: var(--sans); font-size: 13px; color: var(--ink); background: var(--bg); transition: border-color 0.15s; }
-.reason-input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(10,10,10,0.06); }
-.reason-hint { font-size: 10px; color: var(--ink3); margin-top: 4px; }
-
-.field-label { font-size: 11px; font-weight: 600; color: var(--ink2); margin-bottom: 6px; letter-spacing: 0.5px; display: block; }
-.modal-textarea { width: 100%; min-height: 140px; background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius); font-family: var(--mono); font-size: 12px; line-height: 1.8; color: var(--ink); padding: 12px; resize: vertical; }
-.modal-textarea:focus { outline: none; border-color: var(--ink); }
-.modal-footer { display: flex; gap: 10px; margin-top: 14px; }
-.btn-apply { flex: 1; padding: 11px; border: none; border-radius: var(--radius); font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
-.btn-apply.b { background: var(--red); color: #fff; }
-.btn-apply.b:hover { background: #b91c1c; }
-.btn-apply.i { background: #f59e0b; color: #fff; }
-.btn-apply.i:hover { background: var(--amber); }
-.btn-apply.c { background: var(--blue); color: #fff; }
-.btn-apply.c:hover { background: #1e40af; }
-.btn-cancel { padding: 11px 18px; background: transparent; border: 1px solid var(--border2); border-radius: var(--radius); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--ink2); transition: all 0.15s; }
-.btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
-
-/* Meta row */
-.meta-row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
-.meta-text { font-size: 11px; color: var(--ink3); }
-
-/* Sample btn */
-.sample-btn { font-size: 11px; padding: 4px 10px; border: 1px solid var(--border2); border-radius: 4px; background: transparent; cursor: pointer; font-family: var(--sans); color: var(--ink2); transition: all 0.12s; }
-.sample-btn:hover { border-color: var(--ink); color: var(--ink); }
-
-@media (max-width: 600px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .topbar { padding: 0 16px; }
-  .main { padding: 24px 16px 60px; }
-}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;font-family:var(--sans);font-size:13px;font-weight:500;padding:10px 22px;border-radius:30px;box-shadow:0 4px 20px rgba(0,0,0,.25);z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 </style>
 </head>
 <body>
-
-<!-- TOP BAR -->
 <nav class="topbar">
-  <div class="topbar-logo">
-    <span class="dot"></span>
-    EmailCleaner
-  </div>
-  <div class="topbar-right">
-    <div class="status-pill loading" id="statusPill">
-      <span class="status-dot pulse"></span>
-      <span id="statusText">Loading database...</span>
-    </div>
-    <span class="topbar-badge">FREE TOOL</span>
-  </div>
+  <div class="tb-logo"><span class="dot"></span>EmailCleaner</div>
+  <span class="tb-badge">FREE TOOL</span>
 </nav>
-
-<!-- MAIN -->
 <main class="main">
-
   <div class="hero">
-    <div class="hero-label">Bulk Email Cleaner</div>
     <h1>Paste emails. Get a clean list instantly.</h1>
-    <p>Automatically removes bounced, invalid, and duplicate emails. Download clean CSV in seconds.</p>
+    <p>Automatically removes bounced, invalid &amp; duplicate emails.</p>
   </div>
-
-  <!-- INPUT CARD -->
   <div class="card">
     <div class="card-head">
       <span class="card-title">Your Email List</span>
-      <span class="pill pill-default" id="inputCount">0 emails</span>
+      <span class="cpill" id="inputCount">0 emails</span>
     </div>
     <div class="card-body">
-      <textarea id="emailInput" oninput="onInput()"
-        placeholder="Paste your emails here — one per line, comma or space separated:
+      <textarea id="emailInput" oninput="onInput()" onpaste="setTimeout(onInput,10)" placeholder="Paste your emails here -- one per line, comma or space separated:
 
 user1@gmail.com
 user2@yahoo.com, user3@hotmail.com
@@ -251,400 +126,91 @@ contact@company.org
 ...
 
 (Maximum 1,000 emails per run)"></textarea>
-
-      <div class="meta-row">
-        <span class="meta-text">Accepts line, comma, semicolon, or space separated lists</span>
-        <button class="sample-btn" onclick="loadSample()">Try sample data</button>
+      <div class="meta">
+        <span class="meta-text">Line, comma, semicolon, or space separated</span>
+        <button class="sample-btn" onclick="loadSample()">Try sample</button>
       </div>
-
-      <!-- Remove list chips -->
-      <div class="remove-summary" id="removeSummary">
-        <span class="remove-label">Remove list:</span>
-        <span class="remove-chip chip-b" id="chipB" style="display:none" onclick="openModal('b')">
-          <span id="nB">0</span> Bounced ×
-        </span>
-        <span class="remove-chip chip-i" id="chipI" style="display:none" onclick="openModal('i')">
-          <span id="nI">0</span> Invalid ×
-        </span>
-        <span class="remove-chip chip-c" id="chipC" style="display:none" onclick="openModal('c')">
-          <span id="nC">0</span> Custom ×
-        </span>
+      <div class="rsummary" id="rsummary">
+        <span class="rlabel">Remove list:</span>
+        <span class="rchip b" id="chipB" style="display:none" onclick="openModal('b')"><span id="nB">0</span> Bounced x</span>
+        <span class="rchip i" id="chipI" style="display:none" onclick="openModal('i')"><span id="nI">0</span> Invalid x</span>
+        <span class="rchip c" id="chipC" style="display:none" onclick="openModal('c')"><span id="nC">0</span> Custom x</span>
       </div>
-
-      <!-- ADD REMOVE EMAILS -->
-      <button class="add-remove-btn" onclick="openModal('b')">
-        + &nbsp; ADD EMAILS TO REMOVE LIST
-      </button>
-
-      <div class="processing" id="processing">
-        <div class="spin"></div>
-        <span id="procText">Processing emails...</span>
-      </div>
-
-      <button class="run-btn" id="runBtn" onclick="runCleaner()" disabled>
-        ▶ &nbsp; RUN CLEANER
-      </button>
+      <button class="arb" onclick="openModal('b')">+ ADD EMAILS TO REMOVE LIST</button>
+      <div class="proc" id="proc"><div class="spin"></div><span id="procTxt">Processing...</span></div>
+      <button class="run-btn" id="runBtn" onclick="runCleaner()" disabled>&#9654; RUN CLEANER</button>
     </div>
   </div>
-
-  <!-- RESULTS -->
   <div id="resultsSection" style="display:none">
-
-    <div class="stats-grid">
-      <div class="stat-card green">
-        <div class="stat-num green" id="s1">0</div>
-        <div class="stat-label">Clean</div>
-      </div>
-      <div class="stat-card red">
-        <div class="stat-num red" id="s2">0</div>
-        <div class="stat-label">Bounced</div>
-      </div>
-      <div class="stat-card amber">
-        <div class="stat-num amber" id="s3">0</div>
-        <div class="stat-label">Duplicates</div>
-      </div>
-      <div class="stat-card gray">
-        <div class="stat-num gray" id="s4">0</div>
-        <div class="stat-label">Removed</div>
-      </div>
-    </div>
-
-    <div class="dl-row">
-      <button class="dl-btn green" onclick="dlCSV('clean')">↓ &nbsp; Download Clean Emails (CSV)</button>
-      <button class="dl-btn red" onclick="dlCSV('removed')">↓ &nbsp; Download Removed Emails (CSV)</button>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <span class="card-title">Results</span>
-        <div class="filter-row">
-          <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
-          <button class="filter-btn" onclick="setFilter('clean',this)">✓ Clean</button>
-          <button class="filter-btn" onclick="setFilter('bounce',this)">✕ Bounced</button>
-          <button class="filter-btn" onclick="setFilter('duplicate',this)">⟳ Duplicate</button>
-          <button class="filter-btn" onclick="setFilter('invalid',this)">⚠ Invalid</button>
-          <button class="filter-btn" onclick="setFilter('custom',this)">⊘ Custom</button>
+    <div class="results-card">
+      <div class="results-head">
+        <div class="stats-wrap">
+          <div class="si g"><span class="n" id="s1">0</span><span class="lbl">Clean</span></div>
+          <div class="sdiv"></div>
+          <div class="si r"><span class="n" id="s2">0</span><span class="lbl">Removed</span></div>
         </div>
+        <button class="copy-btn" id="copyBtn" onclick="copyEmails()">&#8998; Copy Clean Emails</button>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Email Address</th>
-              <th>Status</th>
-              <th>Reason</th>
-            </tr>
-          </thead>
-          <tbody id="resultsBody"></tbody>
-        </table>
-      </div>
+      <div id="cleanList" class="clean-list"></div>
     </div>
-
   </div>
-
 </main>
-
-<!-- MODAL -->
-<div class="overlay" id="overlay" onclick="outsideClose(event)">
+<div class="overlay" id="overlay" onclick="outerClose(event)">
   <div class="modal">
-    <div class="modal-head">
-      <span class="modal-title">Add Emails to Remove List</span>
-      <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="mhead">
+      <span class="mtitle">Add Emails to Remove List</span>
+      <button class="mclose" onclick="closeModal()">x</button>
     </div>
-    <div class="modal-body">
-
-      <label class="field-label">Select removal type:</label>
-      <div class="type-grid">
-        <button class="type-option active-b" id="tB" onclick="selType('b')">
-          <span class="type-icon">🚫</span>
-          Bounced
-          <span class="type-sub">Saved to database</span>
-        </button>
-        <button class="type-option" id="tI" onclick="selType('i')">
-          <span class="type-icon">⚠️</span>
-          Invalid
-          <span class="type-sub">Saved to database</span>
-        </button>
-        <button class="type-option" id="tC" onclick="selType('c')">
-          <span class="type-icon">⊘</span>
-          Custom
-          <span class="type-sub">Saved with reason</span>
-        </button>
+    <div class="mbody">
+      <label class="fl">Select removal type:</label>
+      <div class="tgrid">
+        <button class="topt ab" id="tB" onclick="selType('b')"><span class="ticon">&#128683;</span>Bounced<span class="tsub">Saved to DB</span></button>
+        <button class="topt" id="tI" onclick="selType('i')"><span class="ticon">&#9888;&#65039;</span>Invalid<span class="tsub">Saved to DB</span></button>
+        <button class="topt" id="tC" onclick="selType('c')"><span class="ticon">&#8856;</span>Custom<span class="tsub">With reason</span></button>
       </div>
-
-      <div class="type-desc-box b" id="typeDesc">
-        <strong>Bounced emails</strong> — These will be permanently saved to the bounce database.
+      <div class="tdesc b" id="typeDesc"><strong>Bounced emails</strong> -- Permanently saved to bounce database. All future users will see these marked as bounced automatically.</div>
+      <div class="rbox" id="reasonBox" style="display:none">
+        <div class="rlbl">Reason for removal <span class="rchars"><span id="charCount">0</span>/50</span></div>
+        <input type="text" class="rinput" id="customReason" maxlength="50" placeholder="e.g. unsubscribed, competitor, internal..." oninput="updChars()">
+        <div class="rhint">Visible in admin dashboard for tracking.</div>
       </div>
-
-      <!-- Custom reason field (shown only for Custom type) -->
-      <div class="reason-box" id="reasonBox" style="display:none">
-        <div class="reason-label">
-          Reason for removal
-          <span class="reason-chars"><span id="charCount">0</span>/50 chars</span>
-        </div>
-        <input type="text" class="reason-input" id="customReason" maxlength="50"
-          placeholder="e.g. unsubscribed, competitor, internal..."
-          oninput="updateCharCount()">
-        <div class="reason-hint">This reason will be visible in the admin dashboard for tracking purposes.</div>
+      <label class="fl">Paste email addresses:</label>
+      <textarea class="mta" id="modalEmails" oninput="updMCnt()" placeholder="email1@example.com&#10;email2@domain.com&#10;..."></textarea>
+      <div class="meta" style="margin-top:5px">
+        <span class="meta-text" id="mCnt">0 emails</span>
+        <span class="meta-text">One per line or comma</span>
       </div>
-
-      <label class="field-label">Paste email addresses:</label>
-      <textarea class="modal-textarea" id="modalEmails" oninput="updateModalCount()"
-        placeholder="email1@example.com&#10;email2@domain.com&#10;email3@company.org&#10;..."></textarea>
-
-      <div class="meta-row" style="margin-top:6px;margin-bottom:0">
-        <span class="meta-text" id="modalCount">0 emails entered</span>
-        <span class="meta-text">One per line or comma separated</span>
+      <div class="mfooter">
+        <button class="mcancel" onclick="closeModal()">Cancel</button>
+        <button class="mapply b" id="mapply" onclick="applyList()">Add to Remove List</button>
       </div>
-
-      <div class="modal-footer">
-        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-        <button class="btn-apply b" id="applyBtn" onclick="applyRemoveList()">
-          ✓ Add to Remove List
-        </button>
-      </div>
-
     </div>
   </div>
 </div>
-
 <script>
-// ═══════════════════════════════════════
-const SUPABASE_URL = 'https://ieyzitcsbjafjtinnvgg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleXppdGNzYmphZmp0aW5udmdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NDQ2MDYsImV4cCI6MjA4OTUyMDYwNn0.oq_j_fbMsSu_rvhcJiKGlfdcnn75fX5BhATeI1WY0EM';
-// ═══════════════════════════════════════
-
-let bounceDB = new Set();
-let RL = { b: new Set(), i: new Set(), c: new Map() }; // custom uses Map: email -> reason
-let results = [];
-let activeFilter = 'all';
-let mtype = 'b';
-
-// ── Load bounce DB ──
-async function loadBounceDB() {
-  try {
-    setStat('loading', 'Loading database...');
-    let all = [], from = 0;
-    while (true) {
-      const r = await fetch(
-        `${SUPABASE_URL}/rest/v1/bounced_emails?select=email&limit=1000&offset=${from}`,
-        { headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY } }
-      );
-      if (!r.ok) throw 0;
-      const d = await r.json();
-      if (!d.length) break;
-      d.forEach(x => all.push(x.email.toLowerCase()));
-      if (d.length < 1000) break;
-      from += 1000;
-    }
-    bounceDB = new Set(all);
- //   setStat('ok', `Database ready — ${bounceDB.size.toLocaleString()} entries`);
-  } catch (e) {
-    setStat('error', 'Offline mode — no database');
-  }
-}
-
-function setStat(type, msg) {
-  const p = document.getElementById('statusPill');
-  p.className = 'status-pill ' + type;
-  p.querySelector('.status-dot').className = 'status-dot' + (type === 'loading' ? ' pulse' : '');
-  document.getElementById('statusText').textContent = msg;
-}
-
-// ── Parsers ──
-function parseEmails(raw) {
-  return [...new Set(raw.split(/[\n\r,;\s]+/).map(e => e.trim().toLowerCase()).filter(e => e.length > 3))];
-}
-function isValid(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
-
-// ── Input ──
-function onInput() {
-  const n = parseEmails(document.getElementById('emailInput').value).length;
-  const p = document.getElementById('inputCount');
-  p.textContent = n.toLocaleString() + ' emails';
-  p.className = 'pill ' + (n > 0 ? 'pill-dark' : 'pill-default');
-  document.getElementById('runBtn').disabled = n === 0;
-}
-
-function loadSample() {
-  document.getElementById('emailInput').value =
-    'alice@gmail.com\nbob@yahoo.com\ncharlie@outlook.com\nbad-email\nalice@gmail.com\nnoreply@test.com\nmark@company.org';
-  onInput();
-}
-
-// ── Modal ──
-function openModal(t) {
-  mtype = t;
-  selType(t);
-  document.getElementById('overlay').classList.add('open');
-  document.getElementById('modalEmails').focus();
-}
-function closeModal() { document.getElementById('overlay').classList.remove('open'); }
-function outsideClose(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
-
-function selType(t) {
-  mtype = t;
-  ['b','i','c'].forEach(k => {
-    const btn = document.getElementById('t' + k.toUpperCase());
-    btn.className = 'type-option' + (k === t ? ' active-' + t : '');
-  });
-  const descs = {
-    b: '<strong>Bounced emails</strong> — Permanently saved to the bounce database. All future users will automatically see these emails marked as bounced.',
-    i: '<strong>Invalid emails</strong> — Saved to the database as invalid. Future users will see these flagged automatically.',
-    c: '<strong>Custom removal</strong> — Enter a reason (e.g. "unsubscribed", "competitor"). These emails and your reason will be saved to the database and visible in the admin dashboard.'
-  };
-  document.getElementById('typeDesc').innerHTML = descs[t];
-  document.getElementById('typeDesc').className = 'type-desc-box ' + t;
-  document.getElementById('applyBtn').className = 'btn-apply ' + t;
-  document.getElementById('reasonBox').style.display = t === 'c' ? 'block' : 'none';
-  updateModalCount();
-}
-
-function updateModalCount() {
-  const n = parseEmails(document.getElementById('modalEmails').value).length;
-  document.getElementById('modalCount').textContent = n.toLocaleString() + ' emails entered';
-}
-
-function updateCharCount() {
-  const v = document.getElementById('customReason').value;
-  document.getElementById('charCount').textContent = v.length;
-}
-
-function applyRemoveList() {
-  const emails = parseEmails(document.getElementById('modalEmails').value);
-  if (!emails.length) { closeModal(); return; }
-
-  if (mtype === 'c') {
-    const reason = document.getElementById('customReason').value.trim() || 'Custom';
-    emails.forEach(e => RL.c.set(e, reason));
-    saveToSupabase(emails, 'custom:' + reason);
-  } else {
-    emails.forEach(e => RL[mtype].add(e));
-    emails.forEach(e => bounceDB.add(e));
-    saveToSupabase(emails, mtype === 'b' ? 'bounced' : 'invalid');
-  }
-
-  updateChips();
-  closeModal();
-  document.getElementById('modalEmails').value = '';
-  document.getElementById('customReason').value = '';
-  document.getElementById('charCount').textContent = '0';
-}
-
-function updateChips() {
-  const total = RL.b.size + RL.i.size + RL.c.size;
-  const setMap = { b: RL.b.size, i: RL.i.size, c: RL.c.size };
-  const idMap = { b: ['chipB','nB'], i: ['chipI','nI'], c: ['chipC','nC'] };
-  Object.keys(idMap).forEach(k => {
-    const [chipId, nId] = idMap[k];
-    const chip = document.getElementById(chipId);
-    chip.style.display = setMap[k] > 0 ? 'inline-flex' : 'none';
-    document.getElementById(nId).textContent = setMap[k];
-  });
-  document.getElementById('removeSummary').className = 'remove-summary' + (total > 0 ? ' show' : '');
-}
-
-async function saveToSupabase(emails, reason) {
-  try {
-    await fetch(`${SUPABASE_URL}/rest/v1/bounced_emails`, {
-      method: 'POST',
-      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'resolution=ignore-duplicates,return=minimal' },
-      body: JSON.stringify(emails.map(e => ({ email: e, reason })))
-    });
-  } catch (e) {}
-}
-
-// ── Run Cleaner ──
-async function runCleaner() {
-  const emails = parseEmails(document.getElementById('emailInput').value).slice(0, 1000);
-  if (!emails.length) return;
-
-  document.getElementById('processing').classList.add('show');
-  document.getElementById('procText').textContent = 'Processing ' + emails.length.toLocaleString() + ' emails...';
-  document.getElementById('runBtn').disabled = true;
-  await new Promise(r => setTimeout(r, 80));
-
-  results = [];
-  const seen = new Set();
-
-  emails.forEach((email, i) => {
-    let status, reason;
-    if (!isValid(email)) {
-      status = 'invalid'; reason = 'Invalid format';
-    } else if (RL.b.has(email) || bounceDB.has(email)) {
-      status = 'bounce'; reason = 'Bounced email';
-    } else if (RL.i.has(email)) {
-      status = 'invalid'; reason = 'Marked as invalid';
-    } else if (RL.c.has(email)) {
-      status = 'custom'; reason = RL.c.get(email);
-    } else if (seen.has(email)) {
-      status = 'duplicate'; reason = 'Duplicate entry';
-    } else {
-      status = 'clean'; reason = '—';
-    }
-    seen.add(email);
-    results.push({ n: i + 1, email, status, reason });
-  });
-
-  const c = { clean: 0, bounce: 0, duplicate: 0, invalid: 0, custom: 0 };
-  results.forEach(r => c[r.status]++);
-
-  document.getElementById('s1').textContent = c.clean.toLocaleString();
-  document.getElementById('s2').textContent = c.bounce.toLocaleString();
-  document.getElementById('s3').textContent = c.duplicate.toLocaleString();
-  document.getElementById('s4').textContent = (c.invalid + c.custom).toLocaleString();
-
-  renderTable();
-  document.getElementById('resultsSection').style.display = 'block';
-  document.getElementById('processing').classList.remove('show');
-  document.getElementById('runBtn').disabled = false;
-  document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
-
-  // Log to Supabase
-  try {
-    await fetch(`${SUPABASE_URL}/rest/v1/user_submissions`, {
-      method: 'POST',
-      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify({ session_id: Math.random().toString(36).slice(2), total_input: emails.length, clean_count: c.clean, bounce_count: c.bounce, dup_count: c.duplicate })
-    });
-  } catch (e) {}
-}
-
-function renderTable() {
-  const filtered = activeFilter === 'all' ? results : results.filter(r => r.status === activeFilter);
-  const badgeMap = { clean: 'badge-clean', bounce: 'badge-bounce', duplicate: 'badge-dup', invalid: 'badge-invalid', custom: 'badge-custom' };
-  const labelMap = { clean: 'Clean', bounce: 'Bounced', duplicate: 'Duplicate', invalid: 'Invalid', custom: 'Custom' };
-  document.getElementById('resultsBody').innerHTML = filtered.map((r, i) =>
-    `<tr>
-      <td style="color:var(--ink3)">${i + 1}</td>
-      <td style="color:var(--ink)">${r.email}</td>
-      <td><span class="badge ${badgeMap[r.status]}">${labelMap[r.status]}</span></td>
-      <td style="color:var(--ink3);font-size:11px">${r.reason}</td>
-    </tr>`
-  ).join('');
-}
-
-function setFilter(f, btn) {
-  activeFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderTable();
-}
-
-function dlCSV(type) {
-  const rows = type === 'clean'
-    ? results.filter(r => r.status === 'clean')
-    : results.filter(r => r.status !== 'clean' && r.status !== 'duplicate');
-  if (!rows.length) return alert('No data to download.');
-  const csv = 'Email,Status,Reason\n' + rows.map(r => `"${r.email}","${r.status}","${r.reason}"`).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-  a.download = type === 'clean' ? 'clean_emails.csv' : 'removed_emails.csv';
-  a.click();
-}
-
-loadBounceDB();
+const SURL='https://ieyzitcsbjafjtinnvgg.supabase.co';
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleXppdGNzYmphZmp0aW5udmdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NDQ2MDYsImV4cCI6MjA4OTUyMDYwNn0.oq_j_fbMsSu_rvhcJiKGlfdcnn75fX5BhATeI1WY0EM';
+const H={apikey:SKEY,Authorization:'Bearer '+SKEY,'Content-Type':'application/json'};
+let bounceDB=new Set(),RL={b:new Set(),i:new Set(),c:new Map()},cleanEmails=[],mtype='b';
+(async()=>{try{let all=[],from=0;while(true){const r=await fetch(SURL+'/rest/v1/bounced_emails?select=email&limit=1000&offset='+from,{headers:{apikey:SKEY,Authorization:'Bearer '+SKEY}});if(!r.ok)break;const d=await r.json();if(!d.length)break;d.forEach(x=>all.push(x.email.toLowerCase()));if(d.length<1000)break;from+=1000;}bounceDB=new Set(all);}catch(e){}})();
+function parseE(raw){var result=[];var lines=raw.split("\n");for(var i=0;i<lines.length;i++){var parts=lines[i].split(/[,;\t\s]+/);for(var j=0;j<parts.length;j++){var e=parts[j].trim().toLowerCase();if(e.length>0)result.push(e);}}return[...new Set(result)];}
+function isValid(e){return/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);}
+function onInput(){const n=parseE(document.getElementById('emailInput').value).length;const p=document.getElementById('inputCount');p.textContent=n.toLocaleString()+' emails';p.className='cpill'+(n>0?' on':'');document.getElementById('runBtn').disabled=n===0;}
+function loadSample(){document.getElementById('emailInput').value='alice@gmail.com\nbob@yahoo.com\ncharlie@outlook.com\nbad-email\nalice@gmail.com\nnoreply@test.com\nmark@company.org';onInput();}
+function openModal(t){mtype=t;selType(t);document.getElementById('overlay').classList.add('open');document.getElementById('modalEmails').focus();}
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+function outerClose(e){if(e.target===document.getElementById('overlay'))closeModal();}
+function selType(t){mtype=t;['b','i','c'].forEach(k=>{document.getElementById('t'+k.toUpperCase()).className='topt'+(k===t?' a'+t:'');});const descs={b:'<strong>Bounced emails</strong> -- Permanently saved to bounce database. All future users will see these marked as bounced automatically.',i:'<strong>Invalid emails</strong> -- Saved to database as invalid. Future users will see these flagged automatically.',c:'<strong>Custom removal</strong> -- Enter a reason. Emails and reason saved to admin dashboard for tracking.'};document.getElementById('typeDesc').innerHTML=descs[t];document.getElementById('typeDesc').className='tdesc '+t;document.getElementById('mapply').className='mapply '+t;document.getElementById('reasonBox').style.display=t==='c'?'block':'none';updMCnt();}
+function updMCnt(){document.getElementById('mCnt').textContent=parseE(document.getElementById('modalEmails').value).length+' emails';}
+function updChars(){document.getElementById('charCount').textContent=document.getElementById('customReason').value.length;}
+function applyList(){const emails=parseE(document.getElementById('modalEmails').value);if(!emails.length){closeModal();return;}if(mtype==='c'){const reason=document.getElementById('customReason').value.trim()||'Custom';emails.forEach(e=>RL.c.set(e,reason));saveToBouncedDB(emails,'custom:'+reason);}else{emails.forEach(e=>{RL[mtype].add(e);bounceDB.add(e);});saveToBouncedDB(emails,mtype==='b'?'bounced':'invalid');}updateChips();closeModal();document.getElementById('modalEmails').value='';document.getElementById('customReason').value='';document.getElementById('charCount').textContent='0';}
+function updateChips(){const m={b:['chipB','nB'],i:['chipI','nI'],c:['chipC','nC']};const s={b:RL.b.size,i:RL.i.size,c:RL.c.size};Object.keys(m).forEach(k=>{const[cid,nid]=m[k];document.getElementById(cid).style.display=s[k]>0?'inline-flex':'none';document.getElementById(nid).textContent=s[k];});const total=s.b+s.i+s.c;document.getElementById('rsummary').className='rsummary'+(total>0?' show':'');}
+async function saveToBouncedDB(emails,reason){try{await fetch(SURL+'/rest/v1/bounced_emails',{method:'POST',headers:{...H,Prefer:'resolution=ignore-duplicates,return=minimal'},body:JSON.stringify(emails.map(e=>({email:e,reason})))});}catch(e){}}
+async function runCleaner(){const emails=parseE(document.getElementById('emailInput').value).slice(0,1000);if(!emails.length)return;document.getElementById('proc').classList.add('show');document.getElementById('procTxt').textContent='Processing '+emails.length.toLocaleString()+' emails...';document.getElementById('runBtn').disabled=true;await new Promise(r=>setTimeout(r,80));const seen=new Set();const sessionId=Math.random().toString(36).slice(2);const toSave=[];cleanEmails=[];let cleanCount=0,removedCount=0;emails.forEach(email=>{let status,reason;if(!isValid(email)){status='invalid';reason='Invalid format';}else if(RL.b.has(email)||bounceDB.has(email)){status='bounce';reason='Bounced email';}else if(RL.i.has(email)){status='invalid';reason='Marked as invalid';}else if(RL.c.has(email)){status='custom';reason=RL.c.get(email);}else if(seen.has(email)){return;}else{status='clean';reason=null;}seen.add(email);toSave.push({session_id:sessionId,email,status,reason});if(status==='clean'){cleanEmails.push(email);cleanCount++;}else{removedCount++;}});document.getElementById('s1').textContent=cleanCount.toLocaleString();document.getElementById('s2').textContent=removedCount.toLocaleString();if(cleanEmails.length>0){document.getElementById('cleanList').textContent=cleanEmails.join('\n');}else{document.getElementById('cleanList').innerHTML='<div class="empty-msg">No clean emails found.</div>';}document.getElementById('resultsSection').style.display='block';document.getElementById('proc').classList.remove('show');document.getElementById('runBtn').disabled=false;document.getElementById('resultsSection').scrollIntoView({behavior:'smooth'});saveResults(toSave,sessionId,emails.length,cleanCount,removedCount);}
+async function saveResults(toSave,sessionId,total,clean,removed){try{for(let i=0;i<toSave.length;i+=500){await fetch(SURL+'/rest/v1/email_results',{method:'POST',headers:{...H,Prefer:'return=minimal'},body:JSON.stringify(toSave.slice(i,i+500))});}await fetch(SURL+'/rest/v1/user_submissions',{method:'POST',headers:{...H,Prefer:'return=minimal'},body:JSON.stringify({session_id:sessionId,total_input:total,clean_count:clean,bounce_count:removed,dup_count:0})});}catch(e){}}
+function copyEmails(){if(!cleanEmails.length)return;navigator.clipboard.writeText(cleanEmails.join('
+')).then(()=>{showToast('Copied '+cleanEmails.length.toLocaleString()+' emails!');});}function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t);}t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 </script>
 </body>
 </html>
+
