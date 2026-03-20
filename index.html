@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EmailCleaner — Free Bulk Email Cleaning Tool</title>
+<title>EmailCleaner</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f9f9f9;--surface:#fff;--s2:#f3f3f3;--ink:#0a0a0a;--ink2:#444;--ink3:#888;--ink4:#bbb;--border:#e0e0e0;--border2:#ccc;--green:#16a34a;--gl:#f0fdf4;--red:#dc2626;--rl:#fef2f2;--amber:#b45309;--al:#fffbeb;--blue:#1d4ed8;--bl:#eff6ff;--r:8px;--rl2:12px;--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
 .topbar{background:var(--ink);color:#fff;padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .tb-logo{font-size:15px;font-weight:700;letter-spacing:-.4px;display:flex;align-items:center;gap:8px;}
 .tb-logo .dot{width:7px;height:7px;border-radius:50%;background:#fff;}
@@ -21,59 +21,62 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
 .card-head{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--s2);}
 .card-title{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);}
 .card-body{padding:18px;}
-.cpill{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:20px;background:var(--s2);color:var(--ink3);border:1px solid var(--border);}
-.cpill.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.pill{font-family:var(--mono);font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;}
+.pill-default{background:var(--s2);color:var(--ink2);border:1px solid var(--border);}
+.pill-dark{background:var(--ink);color:#fff;border:1px solid var(--ink);}
 textarea{width:100%;min-height:200px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);font-family:var(--mono);font-size:12px;line-height:1.8;color:var(--ink);padding:14px;resize:vertical;transition:border-color .15s;}
 textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(10,10,10,.05);}
 textarea::placeholder{color:var(--ink4);font-family:var(--sans);font-size:13px;}
-.meta{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+.meta-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
 .meta-text{font-size:11px;color:var(--ink3);}
-.sample-btn{font-size:11px;padding:3px 9px;border:1px solid var(--border2);border-radius:4px;background:transparent;cursor:pointer;font-family:var(--sans);color:var(--ink3);}
+.sample-btn{font-size:11px;padding:3px 9px;border:1px solid var(--border2);border-radius:4px;background:transparent;cursor:pointer;font-family:var(--sans);color:var(--ink2);transition:all .12s;}
 .sample-btn:hover{border-color:var(--ink);color:var(--ink);}
-.rsummary{display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px;padding:8px 12px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border);}
-.rsummary.show{display:flex;}
-.rlabel{font-size:11px;color:var(--ink3);font-weight:500;}
-.rchip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;cursor:pointer;}
-.rchip.b{background:var(--rl);color:var(--red);border:1px solid #fecaca;}
-.rchip.i{background:var(--al);color:var(--amber);border:1px solid #fde68a;}
-.rchip.c{background:var(--bl);color:var(--blue);border:1px solid #bfdbfe;}
-.arb{width:100%;margin-top:10px;padding:10px;background:transparent;border:1.5px dashed var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.remove-summary{display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px;padding:8px 12px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border);}
+.remove-summary.show{display:flex;}
+.remove-label{font-size:11px;color:var(--ink3);font-weight:500;}
+.remove-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;cursor:pointer;}
+.chip-b{background:var(--rl);color:var(--red);border:1px solid #fecaca;}
+.chip-i{background:var(--al);color:var(--amber);border:1px solid #fde68a;}
+.chip-c{background:var(--bl);color:var(--blue);border:1px solid #bfdbfe;}
+.arb{width:100%;margin-top:10px;padding:11px;background:transparent;border:1.5px dashed var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
 .arb:hover{border-color:var(--ink);color:var(--ink);background:var(--s2);border-style:solid;}
-.proc{display:none;align-items:center;gap:8px;padding:10px 14px;background:var(--al);border:1px solid #fde68a;border-radius:var(--r);font-size:12px;color:var(--amber);font-family:var(--mono);margin-top:10px;}
+.proc{display:none;align-items:center;gap:10px;padding:12px 14px;background:var(--al);border:1px solid #fde68a;border-radius:var(--r);font-size:12px;color:var(--amber);font-family:var(--mono);margin-top:10px;}
 .proc.show{display:flex;}
-.spin{width:12px;height:12px;border:2px solid rgba(180,83,9,.2);border-top-color:var(--amber);border-radius:50%;animation:sp .7s linear infinite;}
+.spin{width:13px;height:13px;border:2px solid rgba(180,83,9,.2);border-top-color:var(--amber);border-radius:50%;animation:sp .7s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg)}}
 .run-btn{width:100%;margin-top:10px;padding:14px;background:var(--ink);color:#fff;border:none;border-radius:var(--r);font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
 .run-btn:hover{background:#222;transform:translateY(-1px);}
 .run-btn:disabled{background:var(--border2);cursor:not-allowed;transform:none;}
 .results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl2);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
 .results-head{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--s2);display:flex;align-items:center;justify-content:space-between;}
-.stats-wrap{display:flex;align-items:center;gap:16px;}
+.sw{display:flex;align-items:center;gap:16px;}
 .si{display:flex;align-items:center;gap:6px;}
 .si .n{font-family:var(--mono);font-size:20px;font-weight:700;}
-.si .lbl{font-size:12px;font-weight:500;}
-.si.g .n,.si.g .lbl{color:var(--green);}
-.si.r .n,.si.r .lbl{color:var(--red);}
+.si .l{font-size:12px;font-weight:500;}
+.si.g .n,.si.g .l{color:var(--green);}
+.si.r .n,.si.r .l{color:var(--red);}
 .sdiv{width:1px;height:20px;background:var(--border);}
 .copy-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--ink2);transition:all .15s;}
 .copy-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
-.copy-btn.copied{background:var(--green);color:#fff;border-color:var(--green);}
 .clean-list{padding:16px 18px;font-family:var(--mono);font-size:12px;line-height:2;color:var(--ink2);max-height:400px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;}
 .clean-list::-webkit-scrollbar{width:4px;}.clean-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .empty-msg{padding:40px;text-align:center;color:var(--ink3);font-size:13px;}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;font-family:var(--sans);font-size:13px;font-weight:500;padding:10px 22px;border-radius:30px;box-shadow:0 4px 20px rgba(0,0,0,.25);z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px);}
 .overlay.open{display:flex;}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl2);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.15);}
-.mhead{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:#fff;border-radius:var(--rl2) var(--rl2) 0 0;}
-.mtitle{font-size:14px;font-weight:700;}
-.mclose{background:transparent;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;}
-.mclose:hover{color:#fff;}
-.mbody{padding:20px;}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:#fff;border-radius:var(--rl2) var(--rl2) 0 0;}
+.modal-title{font-size:14px;font-weight:700;}
+.modal-close{background:transparent;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;}
+.modal-close:hover{color:#fff;}
+.modal-body{padding:20px;}
 .fl{font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:6px;letter-spacing:.3px;display:block;}
 .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
 .topt{padding:12px 8px;border:2px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--ink2);transition:all .15s;text-align:center;}
 .topt .ticon{font-size:16px;display:block;margin-bottom:4px;}
 .topt .tsub{font-size:10px;font-weight:400;color:var(--ink3);display:block;margin-top:2px;}
+.topt:hover{border-color:var(--ink);}
 .topt.ab{border-color:var(--red);background:var(--rl);color:var(--red);}
 .topt.ai{border-color:#f59e0b;background:var(--al);color:var(--amber);}
 .topt.ac{border-color:var(--blue);background:var(--bl);color:var(--blue);}
@@ -97,9 +100,6 @@ textarea::placeholder{color:var(--ink4);font-family:var(--sans);font-size:13px;}
 .mcancel{padding:10px 16px;background:transparent;border:1px solid var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;color:var(--ink2);}
 .mcancel:hover{border-color:var(--ink);color:var(--ink);}
 @media(max-width:600px){.main{padding:24px 14px 60px;}.hero h1{font-size:22px;}}
-
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#111;color:#fff;font-family:var(--sans);font-size:13px;font-weight:500;padding:10px 22px;border-radius:30px;box-shadow:0 4px 20px rgba(0,0,0,.25);z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;white-space:nowrap;}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 </style>
 </head>
 <body>
@@ -115,26 +115,26 @@ textarea::placeholder{color:var(--ink4);font-family:var(--sans);font-size:13px;}
   <div class="card">
     <div class="card-head">
       <span class="card-title">Your Email List</span>
-      <span class="cpill" id="inputCount">0 emails</span>
+      <span class="pill pill-default" id="inputCount">0 emails</span>
     </div>
     <div class="card-body">
-      <textarea id="emailInput" oninput="onInput()" onpaste="setTimeout(onInput,10)" placeholder="Paste your emails here -- one per line, comma or space separated:
+      <textarea id="emailInput" oninput="onInput()" onpaste="setTimeout(onInput,50)" onkeyup="onInput()" placeholder="Paste your emails here:
 
 user1@gmail.com
-user2@yahoo.com, user3@hotmail.com
+user2@yahoo.com
 contact@company.org
 ...
 
 (Maximum 1,000 emails per run)"></textarea>
-      <div class="meta">
+      <div class="meta-row">
         <span class="meta-text">Line, comma, semicolon, or space separated</span>
         <button class="sample-btn" onclick="loadSample()">Try sample</button>
       </div>
-      <div class="rsummary" id="rsummary">
-        <span class="rlabel">Remove list:</span>
-        <span class="rchip b" id="chipB" style="display:none" onclick="openModal('b')"><span id="nB">0</span> Bounced x</span>
-        <span class="rchip i" id="chipI" style="display:none" onclick="openModal('i')"><span id="nI">0</span> Invalid x</span>
-        <span class="rchip c" id="chipC" style="display:none" onclick="openModal('c')"><span id="nC">0</span> Custom x</span>
+      <div class="remove-summary" id="removeSummary">
+        <span class="remove-label">Remove list:</span>
+        <span class="remove-chip chip-b" id="chipB" style="display:none" onclick="openModal('b')"><span id="nB">0</span> Bounced x</span>
+        <span class="remove-chip chip-i" id="chipI" style="display:none" onclick="openModal('i')"><span id="nI">0</span> Invalid x</span>
+        <span class="remove-chip chip-c" id="chipC" style="display:none" onclick="openModal('c')"><span id="nC">0</span> Custom x</span>
       </div>
       <button class="arb" onclick="openModal('b')">+ ADD EMAILS TO REMOVE LIST</button>
       <div class="proc" id="proc"><div class="spin"></div><span id="procTxt">Processing...</span></div>
@@ -144,10 +144,10 @@ contact@company.org
   <div id="resultsSection" style="display:none">
     <div class="results-card">
       <div class="results-head">
-        <div class="stats-wrap">
-          <div class="si g"><span class="n" id="s1">0</span><span class="lbl">Clean</span></div>
+        <div class="sw">
+          <div class="si g"><span class="n" id="s1">0</span><span class="l">Clean</span></div>
           <div class="sdiv"></div>
-          <div class="si r"><span class="n" id="s2">0</span><span class="lbl">Removed</span></div>
+          <div class="si r"><span class="n" id="s2">0</span><span class="l">Removed</span></div>
         </div>
         <button class="copy-btn" id="copyBtn" onclick="copyEmails()">&#8998; Copy Clean Emails</button>
       </div>
@@ -155,61 +155,309 @@ contact@company.org
     </div>
   </div>
 </main>
-<div class="overlay" id="overlay" onclick="outerClose(event)">
+<div class="toast" id="toast"></div>
+<div class="overlay" id="overlay" onclick="outsideClose(event)">
   <div class="modal">
-    <div class="mhead">
-      <span class="mtitle">Add Emails to Remove List</span>
-      <button class="mclose" onclick="closeModal()">x</button>
+    <div class="modal-head">
+      <span class="modal-title">Add Emails to Remove List</span>
+      <button class="modal-close" onclick="closeModal()">x</button>
     </div>
-    <div class="mbody">
+    <div class="modal-body">
       <label class="fl">Select removal type:</label>
       <div class="tgrid">
         <button class="topt ab" id="tB" onclick="selType('b')"><span class="ticon">&#128683;</span>Bounced<span class="tsub">Saved to DB</span></button>
-        <button class="topt" id="tI" onclick="selType('i')"><span class="ticon">&#9888;&#65039;</span>Invalid<span class="tsub">Saved to DB</span></button>
+        <button class="topt" id="tI" onclick="selType('i')"><span class="ticon">&#9888;</span>Invalid<span class="tsub">Saved to DB</span></button>
         <button class="topt" id="tC" onclick="selType('c')"><span class="ticon">&#8856;</span>Custom<span class="tsub">With reason</span></button>
       </div>
-      <div class="tdesc b" id="typeDesc"><strong>Bounced emails</strong> -- Permanently saved to bounce database. All future users will see these marked as bounced automatically.</div>
+      <div class="tdesc b" id="typeDesc"><strong>Bounced emails</strong> - Permanently saved to bounce database. All future users will see these marked as bounced automatically.</div>
       <div class="rbox" id="reasonBox" style="display:none">
         <div class="rlbl">Reason for removal <span class="rchars"><span id="charCount">0</span>/50</span></div>
-        <input type="text" class="rinput" id="customReason" maxlength="50" placeholder="e.g. unsubscribed, competitor, internal..." oninput="updChars()">
+        <input type="text" class="rinput" id="customReason" maxlength="50" placeholder="e.g. unsubscribed, competitor..." oninput="updChars()">
         <div class="rhint">Visible in admin dashboard for tracking.</div>
       </div>
       <label class="fl">Paste email addresses:</label>
       <textarea class="mta" id="modalEmails" oninput="updMCnt()" placeholder="email1@example.com&#10;email2@domain.com&#10;..."></textarea>
-      <div class="meta" style="margin-top:5px">
+      <div class="meta-row" style="margin-top:5px">
         <span class="meta-text" id="mCnt">0 emails</span>
         <span class="meta-text">One per line or comma</span>
       </div>
       <div class="mfooter">
         <button class="mcancel" onclick="closeModal()">Cancel</button>
-        <button class="mapply b" id="mapply" onclick="applyList()">Add to Remove List</button>
+        <button class="mapply b" id="mapply" onclick="applyRemoveList()">Add to Remove List</button>
       </div>
     </div>
   </div>
 </div>
 <script>
-const SURL='https://ieyzitcsbjafjtinnvgg.supabase.co';
-const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleXppdGNzYmphZmp0aW5udmdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NDQ2MDYsImV4cCI6MjA4OTUyMDYwNn0.oq_j_fbMsSu_rvhcJiKGlfdcnn75fX5BhATeI1WY0EM';
-const H={apikey:SKEY,Authorization:'Bearer '+SKEY,'Content-Type':'application/json'};
-let bounceDB=new Set(),RL={b:new Set(),i:new Set(),c:new Map()},cleanEmails=[],mtype='b';
-(async()=>{try{let all=[],from=0;while(true){const r=await fetch(SURL+'/rest/v1/bounced_emails?select=email&limit=1000&offset='+from,{headers:{apikey:SKEY,Authorization:'Bearer '+SKEY}});if(!r.ok)break;const d=await r.json();if(!d.length)break;d.forEach(x=>all.push(x.email.toLowerCase()));if(d.length<1000)break;from+=1000;}bounceDB=new Set(all);}catch(e){}})();
-function parseE(raw){if(!raw)return[];var a=raw.split(String.fromCharCode(10));var b=[];var s={};for(var i=0;i<a.length;i++){var row=a[i].replace(/,/g,' ').replace(/;/g,' ');var words=row.split(' ');for(var j=0;j<words.length;j++){var e=words[j].trim().toLowerCase();if(e.length>2&&!s[e]){s[e]=1;b.push(e);}}}return b;}
-function isValid(e){return/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);}
-function onInput(){const n=parseE(document.getElementById('emailInput').value).length;const p=document.getElementById('inputCount');p.textContent=n.toLocaleString()+' emails';p.className='cpill'+(n>0?' on':'');document.getElementById('runBtn').disabled=n===0;}
-function loadSample(){document.getElementById('emailInput').value='alice@gmail.com\nbob@yahoo.com\ncharlie@outlook.com\nbad-email\nalice@gmail.com\nnoreply@test.com\nmark@company.org';onInput();}
-function openModal(t){mtype=t;selType(t);document.getElementById('overlay').classList.add('open');document.getElementById('modalEmails').focus();}
-function closeModal(){document.getElementById('overlay').classList.remove('open');}
-function outerClose(e){if(e.target===document.getElementById('overlay'))closeModal();}
-function selType(t){mtype=t;['b','i','c'].forEach(k=>{document.getElementById('t'+k.toUpperCase()).className='topt'+(k===t?' a'+t:'');});const descs={b:'<strong>Bounced emails</strong> -- Permanently saved to bounce database. All future users will see these marked as bounced automatically.',i:'<strong>Invalid emails</strong> -- Saved to database as invalid. Future users will see these flagged automatically.',c:'<strong>Custom removal</strong> -- Enter a reason. Emails and reason saved to admin dashboard for tracking.'};document.getElementById('typeDesc').innerHTML=descs[t];document.getElementById('typeDesc').className='tdesc '+t;document.getElementById('mapply').className='mapply '+t;document.getElementById('reasonBox').style.display=t==='c'?'block':'none';updMCnt();}
-function updMCnt(){document.getElementById('mCnt').textContent=parseE(document.getElementById('modalEmails').value).length+' emails';}
-function updChars(){document.getElementById('charCount').textContent=document.getElementById('customReason').value.length;}
-function applyList(){const emails=parseE(document.getElementById('modalEmails').value);if(!emails.length){closeModal();return;}if(mtype==='c'){const reason=document.getElementById('customReason').value.trim()||'Custom';emails.forEach(e=>RL.c.set(e,reason));saveToBouncedDB(emails,'custom:'+reason);}else{emails.forEach(e=>{RL[mtype].add(e);bounceDB.add(e);});saveToBouncedDB(emails,mtype==='b'?'bounced':'invalid');}updateChips();closeModal();document.getElementById('modalEmails').value='';document.getElementById('customReason').value='';document.getElementById('charCount').textContent='0';}
-function updateChips(){const m={b:['chipB','nB'],i:['chipI','nI'],c:['chipC','nC']};const s={b:RL.b.size,i:RL.i.size,c:RL.c.size};Object.keys(m).forEach(k=>{const[cid,nid]=m[k];document.getElementById(cid).style.display=s[k]>0?'inline-flex':'none';document.getElementById(nid).textContent=s[k];});const total=s.b+s.i+s.c;document.getElementById('rsummary').className='rsummary'+(total>0?' show':'');}
-async function saveToBouncedDB(emails,reason){try{await fetch(SURL+'/rest/v1/bounced_emails',{method:'POST',headers:{...H,Prefer:'resolution=ignore-duplicates,return=minimal'},body:JSON.stringify(emails.map(e=>({email:e,reason})))});}catch(e){}}
-async function runCleaner(){const emails=parseE(document.getElementById('emailInput').value).slice(0,1000);if(!emails.length)return;document.getElementById('proc').classList.add('show');document.getElementById('procTxt').textContent='Processing '+emails.length.toLocaleString()+' emails...';document.getElementById('runBtn').disabled=true;await new Promise(r=>setTimeout(r,80));const seen=new Set();const sessionId=Math.random().toString(36).slice(2);const toSave=[];cleanEmails=[];let cleanCount=0,removedCount=0;emails.forEach(email=>{let status,reason;if(!isValid(email)){status='invalid';reason='Invalid format';}else if(RL.b.has(email)||bounceDB.has(email)){status='bounce';reason='Bounced email';}else if(RL.i.has(email)){status='invalid';reason='Marked as invalid';}else if(RL.c.has(email)){status='custom';reason=RL.c.get(email);}else if(seen.has(email)){return;}else{status='clean';reason=null;}seen.add(email);toSave.push({session_id:sessionId,email,status,reason});if(status==='clean'){cleanEmails.push(email);cleanCount++;}else{removedCount++;}});document.getElementById('s1').textContent=cleanCount.toLocaleString();document.getElementById('s2').textContent=removedCount.toLocaleString();if(cleanEmails.length>0){document.getElementById('cleanList').textContent=cleanEmails.join('\n');}else{document.getElementById('cleanList').innerHTML='<div class="empty-msg">No clean emails found.</div>';}document.getElementById('resultsSection').style.display='block';document.getElementById('proc').classList.remove('show');document.getElementById('runBtn').disabled=false;document.getElementById('resultsSection').scrollIntoView({behavior:'smooth'});saveResults(toSave,sessionId,emails.length,cleanCount,removedCount);}
-async function saveResults(toSave,sessionId,total,clean,removed){try{for(let i=0;i<toSave.length;i+=500){await fetch(SURL+'/rest/v1/email_results',{method:'POST',headers:{...H,Prefer:'return=minimal'},body:JSON.stringify(toSave.slice(i,i+500))});}await fetch(SURL+'/rest/v1/user_submissions',{method:'POST',headers:{...H,Prefer:'return=minimal'},body:JSON.stringify({session_id:sessionId,total_input:total,clean_count:clean,bounce_count:removed,dup_count:0})});}catch(e){}}
-function copyEmails(){if(!cleanEmails.length)return;navigator.clipboard.writeText(cleanEmails.join('
-')).then(()=>{showToast('Copied '+cleanEmails.length.toLocaleString()+' emails!');});}function showToast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t);}t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+var SURL = 'https://ieyzitcsbjafjtinnvgg.supabase.co';
+var SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleXppdGNzYmphZmp0aW5udmdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NDQ2MDYsImV4cCI6MjA4OTUyMDYwNn0.oq_j_fbMsSu_rvhcJiKGlfdcnn75fX5BhATeI1WY0EM';
+var bounceDB = {};
+var RL = { b: {}, i: {}, c: {} };
+var cleanEmails = [];
+var mtype = 'b';
+
+// Load bounce DB silently
+(function loadDB() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', SURL + '/rest/v1/bounced_emails?select=email&limit=5000');
+  xhr.setRequestHeader('apikey', SKEY);
+  xhr.setRequestHeader('Authorization', 'Bearer ' + SKEY);
+  xhr.onload = function() {
+    try {
+      var data = JSON.parse(xhr.responseText);
+      for (var i = 0; i < data.length; i++) {
+        bounceDB[data[i].email.toLowerCase()] = 1;
+      }
+    } catch(e) {}
+  };
+  xhr.send();
+})();
+
+function parseEmails(raw) {
+  if (!raw) return [];
+  var parts = raw.split(/[\n\r,;\s]+/);
+  var out = [];
+  var seen = {};
+  for (var i = 0; i < parts.length; i++) {
+    var e = parts[i].trim().toLowerCase();
+    if (e.length > 3 && !seen[e]) {
+      seen[e] = 1;
+      out.push(e);
+    }
+  }
+  return out;
+}
+
+function isValid(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+}
+
+function onInput() {
+  var val = document.getElementById('emailInput').value;
+  var emails = parseEmails(val);
+  var n = emails.length;
+  var p = document.getElementById('inputCount');
+  p.textContent = n + ' emails';
+  p.className = n > 0 ? 'pill pill-dark' : 'pill pill-default';
+  document.getElementById('runBtn').disabled = (n === 0);
+}
+
+function loadSample() {
+  document.getElementById('emailInput').value = 'alice@gmail.com\nbob@yahoo.com\ncharlie@outlook.com\nbad-email\nalice@gmail.com\nnoreply@test.com\nmark@company.org';
+  onInput();
+}
+
+function openModal(t) {
+  mtype = t;
+  selType(t);
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(function(){ document.getElementById('modalEmails').focus(); }, 100);
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function outsideClose(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+function selType(t) {
+  mtype = t;
+  var keys = ['b','i','c'];
+  for (var k = 0; k < keys.length; k++) {
+    var key = keys[k];
+    var btn = document.getElementById('t' + key.toUpperCase());
+    btn.className = 'topt' + (key === t ? ' a' + t : '');
+  }
+  var descs = {
+    b: '<strong>Bounced emails</strong> - Permanently saved to bounce database. All future users will see these marked as bounced automatically.',
+    i: '<strong>Invalid emails</strong> - Saved to database as invalid. Future users will see these flagged automatically.',
+    c: '<strong>Custom removal</strong> - Enter a reason. Emails and reason saved to admin dashboard for tracking.'
+  };
+  document.getElementById('typeDesc').innerHTML = descs[t];
+  document.getElementById('typeDesc').className = 'tdesc ' + t;
+  document.getElementById('mapply').className = 'mapply ' + t;
+  document.getElementById('reasonBox').style.display = (t === 'c') ? 'block' : 'none';
+  updMCnt();
+}
+
+function updMCnt() {
+  var n = parseEmails(document.getElementById('modalEmails').value).length;
+  document.getElementById('mCnt').textContent = n + ' emails';
+}
+
+function updChars() {
+  document.getElementById('charCount').textContent = document.getElementById('customReason').value.length;
+}
+
+function applyRemoveList() {
+  var emails = parseEmails(document.getElementById('modalEmails').value);
+  if (!emails.length) { closeModal(); return; }
+
+  if (mtype === 'c') {
+    var reason = document.getElementById('customReason').value.trim() || 'Custom';
+    for (var i = 0; i < emails.length; i++) {
+      RL.c[emails[i]] = reason;
+    }
+    saveToSupabase(emails, 'custom:' + reason);
+  } else {
+    for (var i = 0; i < emails.length; i++) {
+      RL[mtype][emails[i]] = 1;
+      bounceDB[emails[i]] = 1;
+    }
+    saveToSupabase(emails, mtype === 'b' ? 'bounced' : 'invalid');
+  }
+
+  updateChips();
+  closeModal();
+  document.getElementById('modalEmails').value = '';
+  document.getElementById('customReason').value = '';
+  document.getElementById('charCount').textContent = '0';
+}
+
+function updateChips() {
+  var bSize = Object.keys(RL.b).length;
+  var iSize = Object.keys(RL.i).length;
+  var cSize = Object.keys(RL.c).length;
+  var total = bSize + iSize + cSize;
+
+  var cb = document.getElementById('chipB');
+  cb.style.display = bSize > 0 ? 'inline-flex' : 'none';
+  document.getElementById('nB').textContent = bSize;
+
+  var ci = document.getElementById('chipI');
+  ci.style.display = iSize > 0 ? 'inline-flex' : 'none';
+  document.getElementById('nI').textContent = iSize;
+
+  var cc = document.getElementById('chipC');
+  cc.style.display = cSize > 0 ? 'inline-flex' : 'none';
+  document.getElementById('nC').textContent = cSize;
+
+  document.getElementById('removeSummary').className = 'remove-summary' + (total > 0 ? ' show' : '');
+}
+
+function saveToSupabase(emails, reason) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', SURL + '/rest/v1/bounced_emails');
+  xhr.setRequestHeader('apikey', SKEY);
+  xhr.setRequestHeader('Authorization', 'Bearer ' + SKEY);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('Prefer', 'resolution=ignore-duplicates,return=minimal');
+  var rows = [];
+  for (var i = 0; i < emails.length; i++) {
+    rows.push({ email: emails[i], reason: reason });
+  }
+  xhr.send(JSON.stringify(rows));
+}
+
+function runCleaner() {
+  var emails = parseEmails(document.getElementById('emailInput').value).slice(0, 1000);
+  if (!emails.length) return;
+
+  document.getElementById('proc').classList.add('show');
+  document.getElementById('procTxt').textContent = 'Processing ' + emails.length + ' emails...';
+  document.getElementById('runBtn').disabled = true;
+
+  setTimeout(function() {
+    var seen = {};
+    var sessionId = Math.random().toString(36).slice(2);
+    var toSave = [];
+    cleanEmails = [];
+    var cleanCount = 0, removedCount = 0;
+
+    for (var i = 0; i < emails.length; i++) {
+      var email = emails[i];
+      var status, reason;
+
+      if (!isValid(email)) {
+        status = 'invalid'; reason = 'Invalid format';
+      } else if (RL.b[email] || bounceDB[email]) {
+        status = 'bounce'; reason = 'Bounced email';
+      } else if (RL.i[email]) {
+        status = 'invalid'; reason = 'Marked as invalid';
+      } else if (RL.c[email]) {
+        status = 'custom'; reason = RL.c[email];
+      } else if (seen[email]) {
+        continue; // duplicate — skip
+      } else {
+        status = 'clean'; reason = null;
+      }
+
+      seen[email] = 1;
+      toSave.push({ session_id: sessionId, email: email, status: status, reason: reason });
+
+      if (status === 'clean') {
+        cleanEmails.push(email);
+        cleanCount++;
+      } else {
+        removedCount++;
+      }
+    }
+
+    document.getElementById('s1').textContent = cleanCount;
+    document.getElementById('s2').textContent = removedCount;
+
+    if (cleanEmails.length > 0) {
+      document.getElementById('cleanList').textContent = cleanEmails.join('\n');
+    } else {
+      document.getElementById('cleanList').innerHTML = '<div class="empty-msg">No clean emails found.</div>';
+    }
+
+    document.getElementById('resultsSection').style.display = 'block';
+    document.getElementById('proc').classList.remove('show');
+    document.getElementById('runBtn').disabled = false;
+    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+
+    saveResults(toSave, sessionId, emails.length, cleanCount, removedCount);
+  }, 100);
+}
+
+function saveResults(toSave, sessionId, total, clean, removed) {
+  // Save email_results in batches
+  var batch = toSave.slice(0, 500);
+  if (batch.length > 0) {
+    var xhr1 = new XMLHttpRequest();
+    xhr1.open('POST', SURL + '/rest/v1/email_results');
+    xhr1.setRequestHeader('apikey', SKEY);
+    xhr1.setRequestHeader('Authorization', 'Bearer ' + SKEY);
+    xhr1.setRequestHeader('Content-Type', 'application/json');
+    xhr1.setRequestHeader('Prefer', 'return=minimal');
+    xhr1.send(JSON.stringify(batch));
+  }
+  if (toSave.length > 500) {
+    var batch2 = toSave.slice(500);
+    var xhr1b = new XMLHttpRequest();
+    xhr1b.open('POST', SURL + '/rest/v1/email_results');
+    xhr1b.setRequestHeader('apikey', SKEY);
+    xhr1b.setRequestHeader('Authorization', 'Bearer ' + SKEY);
+    xhr1b.setRequestHeader('Content-Type', 'application/json');
+    xhr1b.setRequestHeader('Prefer', 'return=minimal');
+    xhr1b.send(JSON.stringify(batch2));
+  }
+  // Save session
+  var xhr2 = new XMLHttpRequest();
+  xhr2.open('POST', SURL + '/rest/v1/user_submissions');
+  xhr2.setRequestHeader('apikey', SKEY);
+  xhr2.setRequestHeader('Authorization', 'Bearer ' + SKEY);
+  xhr2.setRequestHeader('Content-Type', 'application/json');
+  xhr2.setRequestHeader('Prefer', 'return=minimal');
+  xhr2.send(JSON.stringify({ session_id: sessionId, total_input: total, clean_count: clean, bounce_count: removed, dup_count: 0 }));
+}
+
+function copyEmails() {
+  if (!cleanEmails.length) return;
+  navigator.clipboard.writeText(cleanEmails.join('\n')).then(function() {
+    showToast('Copied ' + cleanEmails.length + ' emails!');
+  });
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
 </script>
 </body>
 </html>
