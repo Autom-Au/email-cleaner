@@ -190,7 +190,11 @@ tbody td{padding:9px 14px;font-size:.8rem;font-family:'DM Mono',monospace;color:
 <script>
 const SUPABASE_URL='https://ieyzitcsbjafjtinnvgg.supabase.co';
 const SUPABASE_KEY='sb_publishable_13POJrPuB4AV-NoiZ_lg5Q_hXrBYt03';
+const MAILBLAST_WEBHOOK='https://mailblast-pro.vercel.app/api/recruiter/webhook';
+const MAILBLAST_SECRET='mailblast-webhook-2026';
+
 let bounceDB=new Set(),RL={b:new Set(),i:new Set(),c:new Set()},results=[],filter='all',mtype='b';
+
 async function loadBounceDB(){
   try{
     setS('loading','Bounce database loading...');
@@ -208,6 +212,7 @@ async function loadBounceDB(){
     setS('ok',`Ready — ${bounceDB.size.toLocaleString()} bounce emails loaded`);
   }catch(e){setS('error','Database offline — local mode active');}
 }
+
 function setS(t,m){const b=document.getElementById('sbar');b.className='sbar '+t;b.querySelector('.sdot').className='sdot'+(t==='loading'?' pulse':'');document.getElementById('stxt').textContent=m;}
 function parseE(raw){return[...new Set(raw.split(/[\n\r,;\s]+/).map(e=>e.trim().toLowerCase()).filter(e=>e.length>3))];}
 function valid(e){return/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);}
@@ -216,6 +221,7 @@ function loadSample(){document.getElementById('emailInput').value='alice@gmail.c
 function openModal(t){mtype=t;selType(t);document.getElementById('mov').classList.add('open');document.getElementById('mta').focus();}
 function closeModal(){document.getElementById('mov').classList.remove('open');}
 function outerClose(e){if(e.target===document.getElementById('mov'))closeModal();}
+
 function selType(t){
   mtype=t;
   ['b','i','c'].forEach(k=>{const m={'b':'tB','i':'tI','c':'tC'};document.getElementById(m[k]).className='tbtn'+(k===t?' s'+(t==='c'?'c2':t):'');});
@@ -225,7 +231,9 @@ function selType(t){
   document.getElementById('mapply').className='mapply '+t;
   updMCnt();
 }
+
 function updMCnt(){document.getElementById('mcnt').textContent=parseE(document.getElementById('mta').value).length+' emails';}
+
 function applyList(){
   const emails=parseE(document.getElementById('mta').value);
   if(!emails.length){closeModal();return;}
@@ -233,15 +241,32 @@ function applyList(){
   if(mtype!=='c'){emails.forEach(e=>bounceDB.add(e));saveToSupabase(emails,mtype==='b'?'bounced':'invalid');}
   updateChips();closeModal();document.getElementById('mta').value='';
 }
+
 function updateChips(){
   const total=RL.b.size+RL.i.size+RL.c.size;
   const m={b:'chipB',i:'chipI',c:'chipC'},n={b:'nB',i:'nI',c:'nC'};
   Object.keys(m).forEach(k=>{const c=document.getElementById(m[k]);c.style.display=RL[k].size>0?'inline-flex':'none';document.getElementById(n[k]).textContent=RL[k].size;});
   document.getElementById('rsummary').className='rsummary'+(total>0?' show':'');
 }
+
 async function saveToSupabase(emails,reason){
   try{await fetch(`${SUPABASE_URL}/rest/v1/bounced_emails`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=ignore-duplicates,return=minimal'},body:JSON.stringify(emails.map(e=>({email:e,reason})))});}catch(e){}
 }
+
+// ✅ MailBlast Pro webhook — clean emails automatically send చేయి
+async function sendToMailBlast(cleanEmailsList){
+  if(!cleanEmailsList||cleanEmailsList.length===0)return;
+  try{
+    await fetch(MAILBLAST_WEBHOOK,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({secret:MAILBLAST_SECRET,emails:cleanEmailsList}),
+    });
+  }catch(e){
+    console.log('MailBlast sync skipped:',e.message);
+  }
+}
+
 async function runCleaner(){
   const emails=parseE(document.getElementById('emailInput').value).slice(0,1000);
   if(!emails.length)return;
@@ -271,21 +296,30 @@ async function runCleaner(){
   document.getElementById('proc').classList.remove('show');
   document.getElementById('runBtn').disabled=false;
   document.getElementById('res').scrollIntoView({behavior:'smooth'});
+
+  // Save to Supabase
   try{await fetch(`${SUPABASE_URL}/rest/v1/user_submissions`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({session_id:Math.random().toString(36).slice(2),total_input:emails.length,clean_count:c.clean,bounce_count:c.bounce,dup_count:c.duplicate})});}catch(e){}
+
+  // ✅ Send clean emails to MailBlast Pro Central DB
+  await sendToMailBlast(results.filter(r=>r.status==='clean').map(r=>r.email));
 }
+
 function renderTable(){
   const f=filter==='all'?results:results.filter(r=>r.status===filter);
   const tmap={clean:'tc',bounce:'tb',duplicate:'td',invalid:'ti',custom:'tcu'};
   const lmap={clean:'Clean',bounce:'Bounced',duplicate:'Duplicate',invalid:'Invalid',custom:'Custom'};
   document.getElementById('tbody').innerHTML=f.map((r,i)=>`<tr><td style="color:var(--ink3);font-size:.72rem">${i+1}</td><td>${r.email}</td><td><span class="tag ${tmap[r.status]}">${lmap[r.status]}</span></td><td style="font-size:.75rem;color:var(--ink3)">${r.reason}</td></tr>`).join('');
 }
+
 function setF(f,btn){filter=f;document.querySelectorAll('.fp').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderTable();}
+
 function dl(type){
   const rows=type==='clean'?results.filter(r=>r.status==='clean'):results.filter(r=>r.status!=='clean'&&r.status!=='duplicate');
   if(!rows.length){alert('No data!');return;}
   const csv='Email,Status,Reason\n'+rows.map(r=>`"${r.email}","${r.status}","${r.reason}"`).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=type==='clean'?'clean_emails.csv':'removed_emails.csv';a.click();
 }
+
 loadBounceDB();
 </script>
 </body>
