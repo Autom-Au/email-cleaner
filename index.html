@@ -198,13 +198,13 @@ contact@company.org
 var SURL = 'https://ieyzitcsbjafjtinnvgg.supabase.co';
 var SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleXppdGNzYmphZmp0aW5udmdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NDQ2MDYsImV4cCI6MjA4OTUyMDYwNn0.oq_j_fbMsSu_rvhcJiKGlfdcnn75fX5BhATeI1WY0EM';
 var MAILBLAST_WEBHOOK = 'https://mailblast-pro.vercel.app/api/recruiter/webhook';
+var MAILBLAST_BLACKLIST = 'https://mailblast-pro.vercel.app/api/recruiter/blacklist';
 var MAILBLAST_SECRET = 'mailblast-webhook-2026';
 var bounceDB = {};
 var RL = { b: {}, i: {}, c: {} };
 var cleanEmails = [];
 var mtype = 'b';
 
-// Load bounce DB silently
 (function loadDB() {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', SURL + '/rest/v1/bounced_emails?select=email&limit=5000');
@@ -294,6 +294,7 @@ function updChars() {
 function applyRemoveList() {
   var emails = parseEmails(document.getElementById('modalEmails').value);
   if (!emails.length) { closeModal(); return; }
+
   if (mtype === 'c') {
     var reason = document.getElementById('customReason').value.trim() || 'Custom';
     for (var i = 0; i < emails.length; i++) RL.c[emails[i]] = reason;
@@ -301,7 +302,10 @@ function applyRemoveList() {
   } else {
     for (var i = 0; i < emails.length; i++) { RL[mtype][emails[i]] = 1; bounceDB[emails[i]] = 1; }
     saveToSupabase(emails, mtype === 'b' ? 'bounced' : 'invalid');
+    // ✅ Sync bounced/invalid to MailBlast blacklist
+    syncBlacklistToMailBlast(emails);
   }
+
   updateChips(); closeModal();
   document.getElementById('modalEmails').value = '';
   document.getElementById('customReason').value = '';
@@ -331,7 +335,19 @@ function saveToSupabase(emails, reason) {
   xhr.send(JSON.stringify(rows));
 }
 
-// ✅ MailBlast Pro webhook
+// ✅ Sync bounced emails to MailBlast blacklist
+async function syncBlacklistToMailBlast(emails) {
+  if (!emails || !emails.length) return;
+  try {
+    await fetch(MAILBLAST_BLACKLIST, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret: MAILBLAST_SECRET, emails: emails }),
+    });
+  } catch(e) { console.log('Blacklist sync skipped:', e.message); }
+}
+
+// ✅ Send clean emails to MailBlast Central DB
 async function sendToMailBlast(emails) {
   if (!emails || !emails.length) return;
   try {
@@ -356,13 +372,14 @@ function runCleaner() {
     var sessionId = Math.random().toString(36).slice(2);
     var toSave = [];
     cleanEmails = [];
+    var bouncedEmails = [];
     var cleanCount = 0, removedCount = 0;
 
     for (var i = 0; i < emails.length; i++) {
       var email = emails[i];
       var status, reason;
       if (!isValid(email)) { status = 'invalid'; reason = 'Invalid format'; }
-      else if (RL.b[email] || bounceDB[email]) { status = 'bounce'; reason = 'Bounced email'; }
+      else if (RL.b[email] || bounceDB[email]) { status = 'bounce'; reason = 'Bounced email'; bouncedEmails.push(email); }
       else if (RL.i[email]) { status = 'invalid'; reason = 'Marked as invalid'; }
       else if (RL.c[email]) { status = 'custom'; reason = RL.c[email]; }
       else if (seen[email]) { continue; }
@@ -389,8 +406,12 @@ function runCleaner() {
 
     saveResults(toSave, sessionId, emails.length, cleanCount, removedCount);
 
-    // ✅ Send clean emails to MailBlast Pro Central DB
+    // ✅ Sync clean emails to MailBlast Central DB
     sendToMailBlast(cleanEmails);
+
+    // ✅ Sync bounced emails to MailBlast blacklist
+    if (bouncedEmails.length > 0) syncBlacklistToMailBlast(bouncedEmails);
+
   }, 100);
 }
 
