@@ -48,7 +48,7 @@ textarea::placeholder{color:var(--ink4);font-family:var(--sans);font-size:13px;}
 .run-btn:hover{background:#222;transform:translateY(-1px);}
 .run-btn:disabled{background:var(--border2);cursor:not-allowed;transform:none;}
 .results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl2);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
-.results-head{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--s2);display:flex;align-items:center;justify-content:space-between;}
+.results-head{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--s2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
 .sw{display:flex;align-items:center;gap:16px;}
 .si{display:flex;align-items:center;gap:6px;}
 .si .n{font-family:var(--mono);font-size:20px;font-weight:700;}
@@ -56,8 +56,11 @@ textarea::placeholder{color:var(--ink4);font-family:var(--sans);font-size:13px;}
 .si.g .n,.si.g .l{color:var(--green);}
 .si.r .n,.si.r .l{color:var(--red);}
 .sdiv{width:1px;height:20px;background:var(--border);}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
 .copy-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--ink2);transition:all .15s;}
 .copy-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+.copy-btn.green{border-color:#86efac;background:var(--gl);color:var(--green);}
+.copy-btn.green:hover{background:var(--green);color:#fff;}
 .clean-list{padding:16px 18px;font-family:var(--mono);font-size:12px;line-height:2;color:var(--ink2);max-height:400px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;}
 .clean-list::-webkit-scrollbar{width:4px;}.clean-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .empty-msg{padding:40px;text-align:center;color:var(--ink3);font-size:13px;}
@@ -149,7 +152,10 @@ contact@company.org
           <div class="sdiv"></div>
           <div class="si r"><span class="n" id="s2">0</span><span class="l">Removed</span></div>
         </div>
-        <button class="copy-btn" id="copyBtn" onclick="copyEmails()">&#8998; Copy Clean Emails</button>
+        <div class="btn-row">
+          <button class="copy-btn green" onclick="copyEmails()">&#8998; Copy Clean Emails</button>
+          <button class="copy-btn" onclick="downloadCSV()">&#8595; Download CSV</button>
+        </div>
       </div>
       <div id="cleanList" class="clean-list"></div>
     </div>
@@ -191,6 +197,8 @@ contact@company.org
 <script>
 var SURL = 'https://ieyzitcsbjafjtinnvgg.supabase.co';
 var SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleXppdGNzYmphZmp0aW5udmdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NDQ2MDYsImV4cCI6MjA4OTUyMDYwNn0.oq_j_fbMsSu_rvhcJiKGlfdcnn75fX5BhATeI1WY0EM';
+var MAILBLAST_WEBHOOK = 'https://mailblast-pro.vercel.app/api/recruiter/webhook';
+var MAILBLAST_SECRET = 'mailblast-webhook-2026';
 var bounceDB = {};
 var RL = { b: {}, i: {}, c: {} };
 var cleanEmails = [];
@@ -215,7 +223,6 @@ var mtype = 'b';
 
 function parseEmails(raw) {
   if (!raw) return [];
-  // Extract ONLY valid email addresses from any text
   var emailRegex = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
   var matches = raw.match(emailRegex);
   if (!matches) return [];
@@ -223,10 +230,7 @@ function parseEmails(raw) {
   var seen = {};
   for (var i = 0; i < matches.length; i++) {
     var e = matches[i].toLowerCase();
-    if (!seen[e]) {
-      seen[e] = 1;
-      out.push(e);
-    }
+    if (!seen[e]) { seen[e] = 1; out.push(e); }
   }
   return out;
 }
@@ -251,27 +255,21 @@ function loadSample() {
 }
 
 function openModal(t) {
-  mtype = t;
-  selType(t);
+  mtype = t; selType(t);
   document.getElementById('overlay').classList.add('open');
   setTimeout(function(){ document.getElementById('modalEmails').focus(); }, 100);
 }
 
-function closeModal() {
-  document.getElementById('overlay').classList.remove('open');
-}
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
 
-function outsideClose(e) {
-  if (e.target === document.getElementById('overlay')) closeModal();
-}
+function outsideClose(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
 function selType(t) {
   mtype = t;
   var keys = ['b','i','c'];
   for (var k = 0; k < keys.length; k++) {
     var key = keys[k];
-    var btn = document.getElementById('t' + key.toUpperCase());
-    btn.className = 'topt' + (key === t ? ' a' + t : '');
+    document.getElementById('t' + key.toUpperCase()).className = 'topt' + (key === t ? ' a' + t : '');
   }
   var descs = {
     b: '<strong>Bounced emails</strong> - Permanently saved to bounce database. All future users will see these marked as bounced automatically.',
@@ -286,8 +284,7 @@ function selType(t) {
 }
 
 function updMCnt() {
-  var n = parseEmails(document.getElementById('modalEmails').value).length;
-  document.getElementById('mCnt').textContent = n + ' emails';
+  document.getElementById('mCnt').textContent = parseEmails(document.getElementById('modalEmails').value).length + ' emails';
 }
 
 function updChars() {
@@ -297,23 +294,15 @@ function updChars() {
 function applyRemoveList() {
   var emails = parseEmails(document.getElementById('modalEmails').value);
   if (!emails.length) { closeModal(); return; }
-
   if (mtype === 'c') {
     var reason = document.getElementById('customReason').value.trim() || 'Custom';
-    for (var i = 0; i < emails.length; i++) {
-      RL.c[emails[i]] = reason;
-    }
+    for (var i = 0; i < emails.length; i++) RL.c[emails[i]] = reason;
     saveToSupabase(emails, 'custom:' + reason);
   } else {
-    for (var i = 0; i < emails.length; i++) {
-      RL[mtype][emails[i]] = 1;
-      bounceDB[emails[i]] = 1;
-    }
+    for (var i = 0; i < emails.length; i++) { RL[mtype][emails[i]] = 1; bounceDB[emails[i]] = 1; }
     saveToSupabase(emails, mtype === 'b' ? 'bounced' : 'invalid');
   }
-
-  updateChips();
-  closeModal();
+  updateChips(); closeModal();
   document.getElementById('modalEmails').value = '';
   document.getElementById('customReason').value = '';
   document.getElementById('charCount').textContent = '0';
@@ -324,19 +313,9 @@ function updateChips() {
   var iSize = Object.keys(RL.i).length;
   var cSize = Object.keys(RL.c).length;
   var total = bSize + iSize + cSize;
-
-  var cb = document.getElementById('chipB');
-  cb.style.display = bSize > 0 ? 'inline-flex' : 'none';
-  document.getElementById('nB').textContent = bSize;
-
-  var ci = document.getElementById('chipI');
-  ci.style.display = iSize > 0 ? 'inline-flex' : 'none';
-  document.getElementById('nI').textContent = iSize;
-
-  var cc = document.getElementById('chipC');
-  cc.style.display = cSize > 0 ? 'inline-flex' : 'none';
-  document.getElementById('nC').textContent = cSize;
-
+  var cb = document.getElementById('chipB'); cb.style.display = bSize > 0 ? 'inline-flex' : 'none'; document.getElementById('nB').textContent = bSize;
+  var ci = document.getElementById('chipI'); ci.style.display = iSize > 0 ? 'inline-flex' : 'none'; document.getElementById('nI').textContent = iSize;
+  var cc = document.getElementById('chipC'); cc.style.display = cSize > 0 ? 'inline-flex' : 'none'; document.getElementById('nC').textContent = cSize;
   document.getElementById('removeSummary').className = 'remove-summary' + (total > 0 ? ' show' : '');
 }
 
@@ -348,10 +327,20 @@ function saveToSupabase(emails, reason) {
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader('Prefer', 'resolution=ignore-duplicates,return=minimal');
   var rows = [];
-  for (var i = 0; i < emails.length; i++) {
-    rows.push({ email: emails[i], reason: reason });
-  }
+  for (var i = 0; i < emails.length; i++) rows.push({ email: emails[i], reason: reason });
   xhr.send(JSON.stringify(rows));
+}
+
+// ✅ MailBlast Pro webhook
+async function sendToMailBlast(emails) {
+  if (!emails || !emails.length) return;
+  try {
+    await fetch(MAILBLAST_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret: MAILBLAST_SECRET, emails: emails }),
+    });
+  } catch(e) { console.log('MailBlast sync skipped:', e.message); }
 }
 
 function runCleaner() {
@@ -372,30 +361,16 @@ function runCleaner() {
     for (var i = 0; i < emails.length; i++) {
       var email = emails[i];
       var status, reason;
-
-      if (!isValid(email)) {
-        status = 'invalid'; reason = 'Invalid format';
-      } else if (RL.b[email] || bounceDB[email]) {
-        status = 'bounce'; reason = 'Bounced email';
-      } else if (RL.i[email]) {
-        status = 'invalid'; reason = 'Marked as invalid';
-      } else if (RL.c[email]) {
-        status = 'custom'; reason = RL.c[email];
-      } else if (seen[email]) {
-        continue; // duplicate — skip
-      } else {
-        status = 'clean'; reason = null;
-      }
-
+      if (!isValid(email)) { status = 'invalid'; reason = 'Invalid format'; }
+      else if (RL.b[email] || bounceDB[email]) { status = 'bounce'; reason = 'Bounced email'; }
+      else if (RL.i[email]) { status = 'invalid'; reason = 'Marked as invalid'; }
+      else if (RL.c[email]) { status = 'custom'; reason = RL.c[email]; }
+      else if (seen[email]) { continue; }
+      else { status = 'clean'; reason = null; }
       seen[email] = 1;
       toSave.push({ session_id: sessionId, email: email, status: status, reason: reason });
-
-      if (status === 'clean') {
-        cleanEmails.push(email);
-        cleanCount++;
-      } else {
-        removedCount++;
-      }
+      if (status === 'clean') { cleanEmails.push(email); cleanCount++; }
+      else { removedCount++; }
     }
 
     document.getElementById('s1').textContent = cleanCount;
@@ -413,11 +388,13 @@ function runCleaner() {
     document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
 
     saveResults(toSave, sessionId, emails.length, cleanCount, removedCount);
+
+    // ✅ Send clean emails to MailBlast Pro Central DB
+    sendToMailBlast(cleanEmails);
   }, 100);
 }
 
 function saveResults(toSave, sessionId, total, clean, removed) {
-  // Save email_results in batches
   var batch = toSave.slice(0, 500);
   if (batch.length > 0) {
     var xhr1 = new XMLHttpRequest();
@@ -438,7 +415,6 @@ function saveResults(toSave, sessionId, total, clean, removed) {
     xhr1b.setRequestHeader('Prefer', 'return=minimal');
     xhr1b.send(JSON.stringify(batch2));
   }
-  // Save session
   var xhr2 = new XMLHttpRequest();
   xhr2.open('POST', SURL + '/rest/v1/user_submissions');
   xhr2.setRequestHeader('apikey', SKEY);
@@ -451,8 +427,17 @@ function saveResults(toSave, sessionId, total, clean, removed) {
 function copyEmails() {
   if (!cleanEmails.length) return;
   navigator.clipboard.writeText(cleanEmails.join('\n')).then(function() {
-    showToast('Copied ' + cleanEmails.length + ' emails!');
+    showToast('Copied ' + cleanEmails.length + ' clean emails!');
   });
+}
+
+function downloadCSV() {
+  if (!cleanEmails.length) return;
+  var csv = 'Email\n' + cleanEmails.join('\n');
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'clean_emails.csv';
+  a.click();
 }
 
 function showToast(msg) {
